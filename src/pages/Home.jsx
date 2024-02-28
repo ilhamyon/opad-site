@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deauthUser, isAuthenticated } from "../utils/auth";
 import { Button, Menu, Select, message } from "antd";
 import JalanCepat from "../assets/jalancepat.mp3"
@@ -33,34 +33,53 @@ function Home() {
   const [instruction, setInstruction] = useState('');
   const [selectedMode, setSelectedMode] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [repeatAudio] = useState(new Audio(`${TimerAudio}`));
 
   const JalanCepatAudio = new Audio(`${JalanCepat}`);
   const JalanLambatAudio = new Audio(`${JalanLambat}`);
-  const RepeatAudio = new Audio(`${TimerAudio}`);
+  // const RepeatAudio = new Audio(`${TimerAudio}`);
 
   const startTimer = (duration) => {
     const id = setInterval(() => {
       setTime(prevTime => prevTime + 1);
     }, 1000);
     setIntervalId(id);
+    setIsRunning(true)
 
     setTimeout(() => {
       clearInterval(id);
       setTime(0);
       setInstruction('');
       setSelectedMode(null);
+      repeatAudio.pause();
+      setIsRunning(false);
     }, duration * 60000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(intervalId);
+    setTime(0);
+    setInstruction('');
+    setSelectedMode(null);
+    repeatAudio.pause(); // Hentikan pemutaran audio yang diulang
+    repeatAudio.currentTime = 0; // Set waktu audio ke awal
+    setIsRunning(false);
   };
 
   const handleModeChange = (value) => {
     setSelectedMode(value);
   };
 
-  const handleStartTimer = () => {
-    if (selectedMode) {
-      startTimer(parseInt(selectedMode));
-      RepeatAudio.loop = true;
-      RepeatAudio.play();
+  const handleStartStop = () => {
+    if (!isRunning) {
+      if (selectedMode) {
+        startTimer(parseInt(selectedMode));
+        repeatAudio.loop = true;
+        repeatAudio.play();
+      }
+    } else {
+      stopTimer();
     }
   };
 
@@ -99,11 +118,11 @@ function Home() {
                     <Option value="45">45 Menit</Option>
                     <Option value="60">60 Menit</Option>
                   </Select>
-                  <Button size="large" className="bg-sky-950 text-white" onClick={handleStartTimer} disabled={!selectedMode}>
-                    Mulai
+                  <Button size="large" className="bg-sky-950 text-white" onClick={handleStartStop} disabled={!selectedMode}>
+                    {isRunning ? 'Stop' : 'Mulai'}
                   </Button>
                 </div>
-                <div className="mt-5 px-5 text-lg">
+                <div className="mt-5 text-center text-lg">
                   <h2>Mode: {selectedMode} Menit</h2>
                   <h2>Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}</h2>
                   {instruction && <p className="font-bold text-center mt-6">{`"${instruction}..."`}</p>}
@@ -140,16 +159,22 @@ function Home() {
         <h2 className="px-4 text-xl font-semibold">Informasi Kesehatan</h2>
         <div className="grid grid-cols-3 p-4 gap-3 mb-20">
           <div className="flex flex-col justify-center text-center items-center">
-            <img className="rounded-2xl w-28 h-28 object-cover" src="https://media.istockphoto.com/id/1359055641/id/video/rekan-dokter-di-rumah-sakit-mendiskusikan-kasus-saat-berjalan-di-koridor-rumah-sakit.jpg?s=640x640&k=20&c=Nj6IAu2Yu6R4OPfEpkYFvuprz0QiiYWM3a-r225uOA0=" />
-            <p className="text-center">Video<br/> &nbsp;</p>
+            <Link to="/video">
+              <img className="rounded-2xl w-28 h-28 object-cover" src="https://media.istockphoto.com/id/1359055641/id/video/rekan-dokter-di-rumah-sakit-mendiskusikan-kasus-saat-berjalan-di-koridor-rumah-sakit.jpg?s=640x640&k=20&c=Nj6IAu2Yu6R4OPfEpkYFvuprz0QiiYWM3a-r225uOA0=" />
+              <p className="text-center">Video<br/> &nbsp;</p>
+            </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
-            <img className="rounded-2xl w-28 h-28 object-cover" src="https://blogs.insanmedika.co.id/wp-content/uploads/2020/05/Tugas-Perawat.jpg" />
-            <p className="text-center">Artikel<br/> &nbsp;</p>
+            <Link to="/artikel">
+              <img className="rounded-2xl w-28 h-28 object-cover" src="https://blogs.insanmedika.co.id/wp-content/uploads/2020/05/Tugas-Perawat.jpg" />
+              <p className="text-center">Artikel<br/> &nbsp;</p>
+            </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
-            <img className="rounded-2xl w-28 h-28 object-cover" src="https://awsimages.detik.net.id/community/media/visual/2020/05/05/c7f69650-d103-46d4-992c-d5e876968a6e.jpeg?w=600&q=90" />
-            <p className="text-center">Hubungi Perawat</p>
+            <a href="https://wa.me/6285326698776?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
+              <img className="rounded-2xl w-28 h-28 object-cover" src="https://awsimages.detik.net.id/community/media/visual/2020/05/05/c7f69650-d103-46d4-992c-d5e876968a6e.jpeg?w=600&q=90" />
+              <p className="text-center">Hubungi Perawat</p>
+            </a>
           </div>
         </div>
         </section>
