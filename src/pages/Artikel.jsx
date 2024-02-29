@@ -31,14 +31,14 @@ function Artikel() {
         </div>
 
         <div className="px-4 py-6">
-          {/* <embed
+          <embed
             src={`${pdfUrl}`}
             type="application/pdf"
             width="100%"
             height="540px"
             className="border-2 border-gray-200"
-          /> */}
-          <iframe src="/sampel.pdf" width="100%" height="540px" />
+          />
+          {/* <iframe src="/sampel.pdf" width="100%" height="540px" /> */}
           {/* <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
             <Page scale={0.6} pageNumber={pageNumber}  />
           </Document>
