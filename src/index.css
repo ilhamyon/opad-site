@@ -16,3 +16,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.react-pdf__Page__textContent.textLayer {
+  display: none;
+}
+
+.react-pdf__Page__annotations.annotationLayer {
+  display: none;
+}

@@ -6,6 +6,7 @@ import JalanCepat from "../assets/jalancepat.mp3"
 import JalanLambat from "../assets/jalanlambat.mp3"
 import TimerAudio from "../assets/timer.mp3"
 import { sanityClient } from "../lib/sanity/getClient";
+import moment from "moment";
 
 const { Option } = Select;
 
@@ -206,6 +207,78 @@ function Home() {
   };
 
   const kategoriIMT = tentukanKategoriIMT(iMTBulat);
+
+  const createSanityLatihan = async (userData) => {
+    try {
+      const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
+        },
+        body: JSON.stringify({
+          mutations: [
+            {
+              create: {
+                _type: 'latihan-opad', // Ganti dengan jenis dokumen pengguna di Sanity Anda
+                user: {
+                  _type: 'reference',
+                  _ref: opadId // Assuming userData.userId contains the ID of the user document
+                },
+                latihan: userData.latihan,
+                date: userData.date,
+              },
+            },
+          ],
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create user in Sanity');
+      }
+  
+      const data = await response.json();
+      console.log('User created:', data);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+
+  const [formData, setFormData] = useState({
+    user: {
+      _type: 'reference',
+      _ref: opadId
+    },
+    latihan: '',
+    date: '',
+  });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Mengatur tanggal hari ini
+    const formattedDate = moment().format();
+
+    // Menyiapkan data yang akan dikirim
+    const updatedFormData = {
+      ...formData,
+      latihan: true,
+      date: formattedDate,
+    };
+
+    try {
+      // Kirim POST request ke backend Sanity untuk membuat screening baru
+      await createSanityLatihan(updatedFormData);
+
+      // Tampilkan pesan sukses
+      message.success("Anda telah latihan hari ini.");
+      setShowButton(false)
+
+    } catch (error) {
+      // Tangani kesalahan
+      console.error('Error registering user:', error);
+    }
+  };
   
   return (
     <>
@@ -238,7 +311,7 @@ function Home() {
                   {instruction && <p className="font-bold text-center mt-6">{`"${instruction}..."`}</p>}
 
                   {showButton && (
-                    <Button className="mt-6 bg-sky-950 text-white" size="large">
+                    <Button onClick={handleSubmit} className="mt-6 bg-sky-950 text-white" size="large">
                       Saya sudah melakukan latihan
                     </Button>
                   )}

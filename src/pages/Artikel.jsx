@@ -30,38 +30,24 @@ function Artikel() {
             <h2 className="text-xl font-bold px-4 py-4">Artikel</h2>
         </div>
 
-        <div className="px-4 py-6">
-          <embed
+        <div>
+          {/* <embed
             src={`${pdfUrl}`}
             type="application/pdf"
             width="100%"
             height="540px"
             className="border-2 border-gray-200"
-          />
+          /> */}
           {/* <iframe src="/sampel.pdf" width="100%" height="540px" /> */}
-          {/* <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page scale={0.6} pageNumber={pageNumber}  />
+          <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} canvas={{ height: 600 }}>
+            <Page scale={0.5} pageNumber={pageNumber}  />
           </Document>
 
-          <div>
-            <p>
-              Page {pageNumber} of {numPages}
-            </p>
-            <Button
-              type="button"
-              disabled={pageNumber <= 1}
-              onClick={goToPrevPage}
-            >
-              Previous
-            </Button>
-            <Button
-              type="button"
-              disabled={pageNumber >= numPages}
-              onClick={goToNextPage}
-            >
-              Next
-            </Button>
-          </div> */}
+          <div className="mb-16 py-10 px-4 flex justify-center gap-4">
+            <p>Page {pageNumber} of {numPages} </p>
+            <Button disabled={pageNumber <= 1} onClick={goToPrevPage}> Previous </Button>
+            <Button disabled={pageNumber >= numPages} onClick={goToNextPage}> Next </Button>
+          </div>
         </div>
     </div>
   )
