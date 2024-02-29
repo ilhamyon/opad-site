@@ -1,4 +1,5 @@
 import { Document, Page, pdfjs } from "react-pdf"
+import SampelPdf from "../assets/sampel.pdf"
 
 // Set worker URL to enable worker support (replace this with your own workerSrc)
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -13,21 +14,18 @@ function Artikel() {
             <h2 className="text-xl font-bold px-4 py-4">Artikel</h2>
         </div>
 
-        <div className="px-4 py-6 w-[480px]">
-          {/* <embed
-            src={SampelPdf}
+        <div className="px-4 py-6 flex justify-center">
+          <embed
+            src={`${pdfUrl}`}
             type="application/pdf"
             width="100%"
-            height="1000px"
+            height="540px"
             className="border-2 border-gray-200"
-          /> */}
+          />
           {/* <iframe src="/sampel.pdf" width="100%" height="500px" /> */}
-          {/* <object data="/sampel.pdf" type="application/pdf" width="100%" height="600">
-            <p>Maaf, file PDF tidak dapat dimuat. Silakan periksa kembali nanti.</p>
-          </object> */}
-          <Document file={pdfUrl}>
-            <Page pageNumber={1} />
-          </Document>
+          {/* <Document file={pdfUrl}>
+            <Page pageNumber={3} />
+          </Document> */}
         </div>
     </div>
   )
