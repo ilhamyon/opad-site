@@ -10,7 +10,7 @@ function BottomMenu() {
   console.log('cek path:', location.pathname);
   return (
     <>
-        <nav className="fixed bottom-0 w-full bg-white shadow-lg max-w-screen-sm">
+        <nav className="fixed bottom-0 w-full bg-white shadow-lg max-w-screen-sm z-50">
             <ul className="flex justify-around py-2">
                 <li className={`nav-item ${isActive('/home')}`}>
                     <Link to="/home" className={`flex flex-col text-sm items-center text-gray-500 ${isActive('/home') && 'text-sky-900'}`}>

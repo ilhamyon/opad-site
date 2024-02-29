@@ -167,15 +167,6 @@ function Biodata() {
                 onChange={handleUpdateChange}
                 required
               />
-              {/* <Input
-                type="text"
-                name="gender"
-                placeholder="Jenis Kelamin"
-                size="large"
-                className="mb-4 border"
-                value={formUpdate.gender}
-                onChange={handleUpdateChange}
-              /> */}
               <Select
                 defaultValue="Laki-laki"
                 name="gender"

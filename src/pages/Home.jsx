@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { deauthUser, isAuthenticated } from "../utils/auth";
-import { Button, Menu, Select, message } from "antd";
+import { isAuthenticated } from "../utils/auth";
+import { Button, Select, message } from "antd";
 import JalanCepat from "../assets/jalancepat.mp3"
 import JalanLambat from "../assets/jalanlambat.mp3"
 import TimerAudio from "../assets/timer.mp3"
+import { sanityClient } from "../lib/sanity/getClient";
 
 const { Option } = Select;
 
 function Home() {
   const navigate = useNavigate();
-  const opadData = JSON.parse(localStorage.getItem('opadData'));
-  // const opadId = (localStorage.getItem('opadId'));
-  // console.log('cek user: ', opadData)
+  const opadId = (localStorage.getItem('opadId'));
+  console.log('cek id user: ', opadId)
 
   useEffect(() => {
     // Check if the user is authenticated when the component mounts
@@ -23,11 +23,54 @@ function Home() {
     }
   }, [navigate]);
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="signout" onClick={deauthUser}>Logout</Menu.Item>
-    </Menu>
-  );
+  const [serverData, setServerData] = useState({
+    data: [],
+    error: null,
+    loading: true,
+  });
+
+  useEffect(() => {
+    async function fetchSanityData() {
+      try {
+        const sanityData = await sanityClient.fetch(`*[_type == 'user-opad']{
+          _id,
+          name,
+          email,
+          type,
+          password,
+          ttl,
+          gender,
+          alamat,
+          datetk,
+          tekanandarah,
+          tekanandarah2,
+          dategd,
+          guladarah,
+          tb,
+          bb,
+          telepon
+        }`);
+
+        // Filter the data array based on opadId
+        const filteredData = sanityData.filter(item => item._id === opadId);
+
+        setServerData({
+          data: filteredData,
+          error: null,
+          loading: false,
+        });
+      } catch (error) {
+        setServerData({
+          data: [],
+          error: 'Error getting data. Please try again later.',
+          loading: false,
+        });
+      }
+    }
+
+    fetchSanityData();
+  }, []);
+  console.log('cek data home: ', serverData)
 
   const [time, setTime] = useState(0);
   const [instruction, setInstruction] = useState('');
@@ -35,6 +78,7 @@ function Home() {
   const [intervalId, setIntervalId] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [repeatAudio] = useState(new Audio(`${TimerAudio}`));
+  const [showButton, setShowButton] = useState(false);
 
   const JalanCepatAudio = new Audio(`${JalanCepat}`);
   const JalanLambatAudio = new Audio(`${JalanLambat}`);
@@ -46,6 +90,7 @@ function Home() {
     }, 1000);
     setIntervalId(id);
     setIsRunning(true)
+    setShowButton(false);
 
     setTimeout(() => {
       clearInterval(id);
@@ -54,6 +99,7 @@ function Home() {
       setSelectedMode(null);
       repeatAudio.pause();
       setIsRunning(false);
+      setShowButton(true);
     }, duration * 60000);
   };
 
@@ -65,6 +111,7 @@ function Home() {
     repeatAudio.pause(); // Hentikan pemutaran audio yang diulang
     repeatAudio.currentTime = 0; // Set waktu audio ke awal
     setIsRunning(false);
+    setShowButton(true);
   };
 
   const handleModeChange = (value) => {
@@ -96,13 +143,76 @@ function Home() {
       JalanLambatAudio.play();
     }
   }, [instruction]);
+
+  const tentukanKategoriTekananDarah = (sistole) => {
+    if (sistole < 90) {
+        return "Rendah";
+    } else if (sistole >= 90 && sistole <= 129) {
+        return "Normal";
+    } else {
+        return "Tinggi";
+    }
+  };
+
+  const sistole = serverData?.data[0]?.tekanandarah;
+  const kategoriTekananDarah = tentukanKategoriTekananDarah(sistole);
+
+  const tentukanKategoriTekananDarahDiastolik = (diastole) => {
+    if (diastole >= 60 && diastole <= 84) {
+        return "Normal";
+    } else if (diastole < 60) {
+        return "Rendah";
+    } else {
+        return "Tinggi";
+    }
+  };
+
+  const diastole = serverData?.data[0]?.tekanandarah2;
+  const kategoriTekananDarahDiastolik = tentukanKategoriTekananDarahDiastolik(diastole);
+
+  const tentukanKategoriGulaDarah = (gulaDarah) => {
+    if (gulaDarah < 80) {
+        return "Rendah";
+    } else if (gulaDarah > 200) {
+        return "Tinggi";
+    } else {
+        return "Normal";
+    }
+  };
+
+  const gulaDarah = serverData?.data[0]?.guladarah;
+  const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
+  console.log("cek gula darah: ", kategoriGulaDarah)
+
+  const tinggiBadan = serverData?.data[0]?.tb;
+  const tinggiBadanM = tinggiBadan / 100;
+  const beratBadan = serverData?.data[0]?.bb;
+  const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
+  const iMTBulat = iMT.toFixed(2);
+  console.log('tb: ', iMTBulat);
+
+  const tentukanKategoriIMT = (iMT) => {
+    if (iMT < 17) {
+        return "Sangat kurus";
+    } else if (iMT >= 17 && iMT < 18.5) {
+        return "Kurus";
+    } else if (iMT >= 18.5 && iMT < 25) {
+        return "Normal";
+    } else if (iMT >= 25 && iMT < 27) {
+        return "Overweight";
+    } else {
+        return "Obesitas";
+    }
+  };
+
+  const kategoriIMT = tentukanKategoriIMT(iMTBulat);
   
   return (
     <>
       <section className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
         <div className="bg-sky-950 text-white py-6">
           <h3 className="text-2xl px-4 font-semibold">Selamat Datang</h3>
-          <hp className="text-lg px-4">{opadData[0]?.name}</hp>
+          <hp className="text-lg px-4">{serverData?.data[0]?.name}</hp>
         </div>
 
         <div className="px-4 mt-10">
@@ -126,33 +236,50 @@ function Home() {
                   <h2>Mode: {selectedMode} Menit</h2>
                   <h2>Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}</h2>
                   {instruction && <p className="font-bold text-center mt-6">{`"${instruction}..."`}</p>}
+
+                  {showButton && (
+                    <Button className="mt-6 bg-sky-950 text-white" size="large">
+                      Saya sudah melakukan latihan
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-4 grid grid-cols-2 gap-6 py-10">
+        <div className="p-4 grid grid-cols-2 gap-14 py-20">
           <div className="flex flex-col justify-center text-center items-center">
-            <div className="w-28 h-28 bg-sky-900 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold">
-              350<br/>
-              <span className="text-sm font-light">Tinggi</span>
+            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarah === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+              {serverData?.data[0]?.tekanandarah}<br/>
+              <span className="text-sm font-light">{kategoriTekananDarah}</span>
+            </div>
+            <p>Sistole</p>
+            {kategoriTekananDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
+          </div>
+          <div className="flex flex-col justify-center text-center items-center">
+            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarahDiastolik === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarahDiastolik === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+              {serverData?.data[0]?.tekanandarah2}<br/>
+              <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
+            </div>
+            <p>Diastole</p>
+            {kategoriTekananDarahDiastolik === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
+          </div>
+          <div className="flex flex-col justify-center text-center items-center">
+            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriGulaDarah === 'Rendah' ? 'bg-yellow-500' : kategoriGulaDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+              {serverData?.data[0]?.guladarah}<br/>
+              <span className="text-sm font-light">{kategoriGulaDarah}</span>
             </div>
             <p>Gula Darah</p>
+            {kategoriGulaDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
           </div>
           <div className="flex flex-col justify-center text-center items-center">
-            <div className="w-28 h-28 bg-sky-900 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold">
-              350<br/>
-              <span className="text-sm font-light">Tinggi</span>
-            </div>
-            <p>Tekanan Darah</p>
-          </div>
-          <div className="flex flex-col justify-center text-center items-center">
-            <div className="w-28 h-28 bg-sky-900 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold">
-              350<br/>
-              <span className="text-sm font-light">Obesitas</span>
+            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriIMT === 'Sangat kurus' || kategoriIMT === 'Kurus'  ? 'bg-yellow-500' : kategoriIMT === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+              {iMTBulat}<br/>
+              <span className="text-sm font-light">{kategoriIMT}</span>
             </div>
             <p>IMT</p>
+              {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button className="absolute mt-44">Rekomendasi</Button>}
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Register from './pages/Register'
@@ -8,11 +8,16 @@ import Video from './pages/Video'
 import Kesehatan from './pages/Kesehatan'
 import Profile from './pages/Profile'
 
-function App() {
+function AppContent() {
+  const navigate = useLocation();
+
+  // Mengecek apakah kita berada di halaman '/' atau '/register'
+  const isHomeOrRegister = navigate.pathname === '/' || navigate.pathname === '/register';
+
   return (
-    <Router>
+    <>
       <div className='flex justify-center'>
-        <BottomMenu />
+        {!isHomeOrRegister && <BottomMenu />}
       </div>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -23,6 +28,14 @@ function App() {
         <Route path="/kesehatan" element={<Kesehatan />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }
