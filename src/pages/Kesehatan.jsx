@@ -226,6 +226,69 @@ function Kesehatan() {
       }));
     }
     console.log('cek data latihan: ', dataSource)
+
+    const tentukanKategoriTekananDarah = (sistole) => {
+      if (sistole < 90) {
+          return "Rendah";
+      } else if (sistole >= 90 && sistole <= 129) {
+          return "Normal";
+      } else {
+          return "Tinggi";
+      }
+    };
+  
+    const sistole = serverData?.data[0]?.tekanandarah;
+    const kategoriTekananDarah = tentukanKategoriTekananDarah(sistole);
+  
+    const tentukanKategoriTekananDarahDiastolik = (diastole) => {
+      if (diastole >= 60 && diastole <= 84) {
+          return "Normal";
+      } else if (diastole < 60) {
+          return "Rendah";
+      } else {
+          return "Tinggi";
+      }
+    };
+  
+    const diastole = serverData?.data[0]?.tekanandarah2;
+    const kategoriTekananDarahDiastolik = tentukanKategoriTekananDarahDiastolik(diastole);
+  
+    const tentukanKategoriGulaDarah = (gulaDarah) => {
+      if (gulaDarah < 80) {
+          return "Rendah";
+      } else if (gulaDarah > 200) {
+          return "Tinggi";
+      } else {
+          return "Normal";
+      }
+    };
+  
+    const gulaDarah = serverData?.data[0]?.guladarah;
+    const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
+    console.log("cek gula darah: ", kategoriGulaDarah)
+  
+    const tinggiBadan = serverData?.data[0]?.tb;
+    const tinggiBadanM = tinggiBadan / 100;
+    const beratBadan = serverData?.data[0]?.bb;
+    const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
+    const iMTBulat = iMT.toFixed(2);
+    console.log('tb: ', iMTBulat);
+  
+    const tentukanKategoriIMT = (iMT) => {
+      if (iMT < 17) {
+          return "Sangat kurus";
+      } else if (iMT >= 17 && iMT < 18.5) {
+          return "Kurus";
+      } else if (iMT >= 18.5 && iMT < 25) {
+          return "Normal";
+      } else if (iMT >= 25 && iMT < 27) {
+          return "Overweight";
+      } else {
+          return "Obesitas";
+      }
+    };
+  
+    const kategoriIMT = tentukanKategoriIMT(iMTBulat);
     return (
       <div className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
           <div className="border-b-2 border-gray-400">
@@ -274,6 +337,15 @@ function Kesehatan() {
                       Update
                     </Button>
                   </form>
+
+                  {serverData?.data[0]?.tekanandarah && (
+                    <div className="mt-6 px-4">
+                      <h3 className="font-semibold text-lg">Riwayat:</h3>
+                      <p>Tanggal pemeriksaan: <span className="font-semibold">{moment(serverData?.data[0]?.datetk).format('DD MMMM YYYY')}</span></p>
+                      <p>Sistole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah} mmhg ({kategoriTekananDarah})</span></p>
+                      <p>Diastole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah} mmhg ({kategoriTekananDarahDiastolik})</span></p>
+                    </div>
+                  )}
                 </div>
               </Collapse.Panel>
               <Collapse.Panel header="Gula Darah" key="2">
@@ -307,6 +379,14 @@ function Kesehatan() {
                       Update
                     </Button>
                   </form>
+
+                  {serverData?.data[0]?.guladarah && (
+                    <div className="mt-6 px-4">
+                      <h3 className="font-semibold text-lg">Riwayat:</h3>
+                      <p>Tanggal pemeriksaan: <span className="font-semibold">{moment(serverData?.data[0]?.dategd).format('DD MMMM YYYY')}</span></p>
+                      <p>Gula darah: <span className="font-semibold">{serverData?.data[0]?.guladarah} gr/dl ({kategoriGulaDarah})</span></p>
+                    </div>
+                  )}
                 </div>
               </Collapse.Panel>
               <Collapse.Panel header="IMT" key="3">
@@ -340,6 +420,15 @@ function Kesehatan() {
                       Update
                     </Button>
                   </form>
+                  
+                  {serverData?.data[0]?.tb && (
+                    <div className="mt-6 px-4">
+                      <h3 className="font-semibold text-lg">Riwayat:</h3>
+                      <p>Tinggi badan: <span className="font-semibold">{serverData?.data[0]?.tb} cm</span></p>
+                      <p>Berat badan: <span className="font-semibold">{serverData?.data[0]?.bb} kg</span></p>
+                      <p>IMT: <span className="font-semibold">{iMTBulat} ({kategoriIMT})</span></p>
+                    </div>
+                  )}
                 </div>
               </Collapse.Panel>
               <Collapse.Panel header="Aktivitas Latihan" key="4">
