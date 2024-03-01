@@ -95,6 +95,7 @@ function Register() {
                 className="mb-4 border"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
               />
               <Input
                 type="email"
@@ -104,6 +105,7 @@ function Register() {
                 className="mb-4 border"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
               />
               <Input
                 type="password"
@@ -113,6 +115,7 @@ function Register() {
                 className="mb-8 border"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
               />
               <Button
                 className="text-white bg-gray-800 w-full"
