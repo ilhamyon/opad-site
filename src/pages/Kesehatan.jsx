@@ -343,7 +343,7 @@ function Kesehatan() {
                       <h3 className="font-semibold text-lg">Riwayat:</h3>
                       <p>Tanggal pemeriksaan: <span className="font-semibold">{moment(serverData?.data[0]?.datetk).format('DD MMMM YYYY')}</span></p>
                       <p>Sistole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah} mmhg ({kategoriTekananDarah})</span></p>
-                      <p>Diastole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah} mmhg ({kategoriTekananDarahDiastolik})</span></p>
+                      <p>Diastole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah2} mmhg ({kategoriTekananDarahDiastolik})</span></p>
                     </div>
                   )}
                 </div>
