@@ -132,7 +132,7 @@ function Home() {
   };
 
   useEffect(() => {
-    if (time !== 0 && time % 10 === 0) {
+    if (time !== 0 && time % 180 === 0) {
       setInstruction(prevInstruction => prevInstruction === 'Jalan Cepat' ? 'Jalan Lambat' : 'Jalan Cepat');
     }
   }, [time]);
