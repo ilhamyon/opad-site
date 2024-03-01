@@ -321,39 +321,50 @@ function Home() {
           </div>
         </div>
 
-        <div className="p-4 grid grid-cols-2 gap-14 py-20">
-          <div className="flex flex-col justify-center text-center items-center">
-            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarah === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-              {serverData?.data[0]?.tekanandarah}<br/>
-              <span className="text-sm font-light">{kategoriTekananDarah}</span>
+        <div className="p-4 grid grid-cols-2 gap-14 py-16">
+          {serverData?.data[0]?.tekanandarah && (
+            <div className="flex flex-col justify-center text-center items-center">
+              <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarah === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+                {serverData?.data[0]?.tekanandarah}<br/>
+                <span className="text-sm font-light">{kategoriTekananDarah}</span>
+              </div>
+              <p>Sistole</p>
+              {kategoriTekananDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
             </div>
-            <p>Sistole</p>
-            {kategoriTekananDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
-          </div>
-          <div className="flex flex-col justify-center text-center items-center">
-            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarahDiastolik === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarahDiastolik === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-              {serverData?.data[0]?.tekanandarah2}<br/>
-              <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
+          )}
+
+          {serverData?.data[0]?.tekanandarah2 && (
+            <div className="flex flex-col justify-center text-center items-center">
+              <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarahDiastolik === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarahDiastolik === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+                {serverData?.data[0]?.tekanandarah2}<br/>
+                <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
+              </div>
+              <p>Diastole</p>
+              {kategoriTekananDarahDiastolik === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
             </div>
-            <p>Diastole</p>
-            {kategoriTekananDarahDiastolik === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
-          </div>
-          <div className="flex flex-col justify-center text-center items-center">
-            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriGulaDarah === 'Rendah' ? 'bg-yellow-500' : kategoriGulaDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-              {serverData?.data[0]?.guladarah}<br/>
-              <span className="text-sm font-light">{kategoriGulaDarah}</span>
+          )}
+
+          {serverData?.data[0]?.guladarah && (
+            <div className="flex flex-col justify-center text-center items-center">
+              <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriGulaDarah === 'Rendah' ? 'bg-yellow-500' : kategoriGulaDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+                {serverData?.data[0]?.guladarah}<br/>
+                <span className="text-sm font-light">{kategoriGulaDarah}</span>
+              </div>
+              <p>Gula Darah</p>
+              {kategoriGulaDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
             </div>
-            <p>Gula Darah</p>
-            {kategoriGulaDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
-          </div>
-          <div className="flex flex-col justify-center text-center items-center">
-            <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriIMT === 'Sangat kurus' || kategoriIMT === 'Kurus'  ? 'bg-yellow-500' : kategoriIMT === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-              {iMTBulat}<br/>
-              <span className="text-sm font-light">{kategoriIMT}</span>
+          )}
+
+          {serverData?.data[0]?.tb && (
+            <div className="flex flex-col justify-center text-center items-center">
+              <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriIMT === 'Sangat kurus' || kategoriIMT === 'Kurus'  ? 'bg-yellow-500' : kategoriIMT === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
+                {iMTBulat}<br/>
+                <span className="text-sm font-light">{kategoriIMT}</span>
+              </div>
+              <p>IMT</p>
+                {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button className="absolute mt-44">Rekomendasi</Button>}
             </div>
-            <p>IMT</p>
-              {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button className="absolute mt-44">Rekomendasi</Button>}
-          </div>
+          )}
         </div>
 
         <h2 className="px-4 text-xl font-semibold">Informasi Kesehatan</h2>
