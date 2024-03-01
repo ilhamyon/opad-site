@@ -23,12 +23,16 @@ function Artikel() {
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Aktivitas Fisik</h2>
-          <PDFViewer file={aktivitasFisik} scale={0.66} />
+          <div className="flex justify-center">
+            <PDFViewer file={aktivitasFisik} scale={0.62} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Terapi Jalan Kaki</h2>
-          <PDFViewer file={terapiJalan} scale={0.47} />
+          <div className="flex justify-center">
+            <PDFViewer file={terapiJalan} scale={0.44} />
+          </div>
           {/* <Document file={terapiJalan} onLoadSuccess={onDocumentLoadSuccess} canvas={{ height: 600 }}>
             <Page scale={0.47} pageNumber={pageNumber}  />
           </Document>
@@ -42,27 +46,37 @@ function Artikel() {
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Senam Kaki</h2>
-          <PDFViewer file={senamKaki} scale={0.28} />
+          <div className="flex justify-center">
+            <PDFViewer file={senamKaki} scale={0.26} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Relaksi Otot</h2>
-          <PDFViewer file={relaksiOtot} scale={0.46} />
+          <div className="flex justify-center">
+            <PDFViewer file={relaksiOtot} scale={0.44} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Diabetes Mellitusk</h2>
-          <PDFViewer file={diabetesMellitus} scale={0.27} />
+          <div className="flex justify-center">
+            <PDFViewer file={diabetesMellitus} scale={0.25} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400">
           <h2 className="px-4 font-semibold text-xl mb-4">Manajemen Diet</h2>
-          <PDFViewer file={manajemenDiet} scale={0.3} />
+          <div className="flex justify-center">
+            <PDFViewer file={manajemenDiet} scale={0.28} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400 mb-20">
           <h2 className="px-4 font-semibold text-xl mb-4">Makanan Harian</h2>
-          <PDFViewer file={makananHarian} scale={0.66} />
+          <div className="flex justify-center">
+            <PDFViewer file={makananHarian} scale={0.62} />
+          </div>
         </div>
     </div>
   )

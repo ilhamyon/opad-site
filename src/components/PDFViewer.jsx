@@ -13,7 +13,7 @@ const PDFViewer = ({ file, scale }) => {
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: '100%', overflow: 'hidden' }}>
       <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
         <Page pageNumber={pageNumber} scale={scale || 1} />
       </Document>
