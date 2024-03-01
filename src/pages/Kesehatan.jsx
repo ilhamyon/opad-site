@@ -1,9 +1,22 @@
-import { Button, Collapse, DatePicker, Input, message } from "antd"
+import { Button, Collapse, DatePicker, Input, Table, message } from "antd"
 import { useEffect, useState } from "react";
 import { sanityClient } from "../lib/sanity/getClient";
 import { isAuthenticated } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+
+const columns = [
+  {
+    title: 'Aktivitas',
+    dataIndex: 'latihan',
+    key: 'latihan',
+  },
+  {
+    title: 'Waktu',
+    dataIndex: 'date',
+    key: 'date',
+  },
+];
 
 function Kesehatan() {
     const navigate = useNavigate();
@@ -164,6 +177,55 @@ function Kesehatan() {
         console.error('Error registering user:', error);
       }
     }
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [serverDataLatihan, setServerDataLatihan] = useState({
+      data: [],
+      error: null,
+      loading: true,
+    });
+  
+    useEffect(() => {
+      async function fetchSanityData() {
+        try {
+          setIsLoading(true);
+          const sanityData = await sanityClient.fetch(`*[_type == 'latihan-opad']{
+            _id,
+            latihan,
+            date,
+            user,
+          }`);
+  
+          setServerDataLatihan({
+            data: sanityData,
+            error: null,
+            loading: false,
+          });
+        } catch (error) {
+          setServerDataLatihan({
+            data: [],
+            error: 'Error getting data. Please try again later.',
+            loading: false,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      }
+  
+      fetchSanityData();
+    }, []);
+
+    let dataSource = [];
+    if (serverDataLatihan && serverDataLatihan.data && serverDataLatihan.data.length > 0) {
+      dataSource = serverDataLatihan.data
+      .filter(item => item.user?._ref === opadId)
+      .map((item) => ({
+        key: item._id,
+        latihan: item.latihan ? 'Sudah latihan' : '-',
+        date: moment(item.date).format('MM/DD/YYYY, h:mm a') || "-"
+      }));
+    }
+    console.log('cek data latihan: ', dataSource)
     return (
       <div className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
           <div className="border-b-2 border-gray-400">
@@ -278,6 +340,11 @@ function Kesehatan() {
                       Update
                     </Button>
                   </form>
+                </div>
+              </Collapse.Panel>
+              <Collapse.Panel header="Aktivitas Latihan" key="4">
+                <div className="py-6">
+                  <Table className='font-normal' columns={columns} dataSource={dataSource} loading={isLoading}/>
                 </div>
               </Collapse.Panel>
             </Collapse>
