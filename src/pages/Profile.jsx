@@ -78,6 +78,7 @@ function Profile() {
                 patch: {
                   id: opadId, // The _id of the document to update
                   set: {
+                    name: opadData.name,
                     ttl: opadData.ttl,
                     gender: opadData.gender,
                     alamat: opadData.alamat,
@@ -101,6 +102,7 @@ function Profile() {
     };
 
     const [formUpdate, setFormUpdate] = useState({
+      name: "",
       ttl: null,
       gender: "",
       alamat: "",
@@ -109,6 +111,7 @@ function Profile() {
 
     useEffect(() => {
       setFormUpdate({
+        name: serverData?.data[0]?.name || "",
         ttl: serverData?.data[0]?.ttl || "",
         gender: serverData?.data[0]?.gender || "Jenis Kelamin",
         alamat: serverData?.data[0]?.alamat || "",
@@ -151,6 +154,16 @@ function Profile() {
           <div className="py-10 pb-32">
             <form className="px-4 items-center" onSubmit={handleSubmit}>
               <h2 className="font-bold text-[18px] lg:text-4xl mb-10 text-gray-900 uppercase">Biodata <br/><span className="text-xl">({opadData[0]?.name})</span></h2>
+              <Input
+                type="text"
+                name="name"
+                placeholder="Nama"
+                size="large"
+                className="mb-4 border"
+                value={formUpdate.name}
+                onChange={handleUpdateChange}
+                required
+              />
               <DatePicker
                 name="ttl"
                 placeholder="Tanggal Lahir"

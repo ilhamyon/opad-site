@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isAuthenticated } from "../utils/auth";
-import { Button, Select, message } from "antd";
+import { Button, Modal, Select, message } from "antd";
 import JalanCepat from "../assets/jalancepat.mp3"
 import JalanLambat from "../assets/jalanlambat.mp3"
 import TimerAudio from "../assets/timer.mp3"
@@ -279,6 +279,19 @@ function Home() {
       console.error('Error registering user:', error);
     }
   };
+
+  const [visible, setVisible] = useState(false);
+  const [modalContentId, setModalContentId] = useState(null);
+
+  const handleOpenModal = (id) => {
+    setModalContentId(id);
+    setVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setVisible(false);
+    setModalContentId(null); // Reset modal content id when modal is closed
+  };
   
   return (
     <>
@@ -329,7 +342,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriTekananDarah}</span>
               </div>
               <p>Sistole</p>
-              {kategoriTekananDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("SistoleTinggi")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarah === 'Rendah' && <Button onClick={() => handleOpenModal("SistoleRendah")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarah === 'Normal' && <Button onClick={() => handleOpenModal("SistoleNormal")} className="absolute mt-44">Rekomendasi</Button>}
             </div>
           )}
 
@@ -340,7 +355,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
               </div>
               <p>Diastole</p>
-              {kategoriTekananDarahDiastolik === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarahDiastolik === 'Tinggi' && <Button onClick={() => handleOpenModal("DiastoleTinggi")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarahDiastolik === 'Rendah' && <Button onClick={() => handleOpenModal("DiastoleRendah")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarahDiastolik === 'Normal' && <Button onClick={() => handleOpenModal("DiastoleNormal")} className="absolute mt-44">Rekomendasi</Button>}
             </div>
           )}
 
@@ -351,7 +368,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriGulaDarah}</span>
               </div>
               <p>Gula Darah</p>
-              {kategoriGulaDarah === 'Tinggi' && <Button className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriGulaDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("GDTinggi")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriGulaDarah === 'Rendah' && <Button onClick={() => handleOpenModal("GDRendah")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriGulaDarah === 'Normal' && <Button onClick={() => handleOpenModal("GDNormal")} className="absolute mt-44">Rekomendasi</Button>}
             </div>
           )}
 
@@ -362,7 +381,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriIMT}</span>
               </div>
               <p>IMT</p>
-                {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button className="absolute mt-44">Rekomendasi</Button>}
+                {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button onClick={() => handleOpenModal("IMTObesitas")} className="absolute mt-44">Rekomendasi</Button>}
+                {(kategoriIMT === 'Kurus' || kategoriIMT === 'Sangat kurus') && <Button onClick={() => handleOpenModal("IMTKurus")} className="absolute mt-44">Rekomendasi</Button>}
+                {kategoriIMT === 'Normal'  && <Button onClick={() => handleOpenModal("IMTNormal")} className="absolute mt-44">Rekomendasi</Button>}
             </div>
           )}
         </div>
@@ -389,6 +410,72 @@ function Home() {
           </div>
         </div>
         </section>
+        <Modal
+          title=""
+          visible={visible}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key="cancel" onClick={handleCloseModal}>
+              Tutup
+            </Button>
+          ]}
+        >
+          <div className="mt-6">
+            {modalContentId === "IMTNormal" &&
+              <div>
+                <p>Bagus! Pertahankan berat badan ideal dengan makan sehat, rutin berolahraga, dan hindari makanan manis, asin, dan berlemak.</p>
+              </div>
+            }
+
+            {modalContentId === "IMTKurus" &&
+              <div>
+                <p>Tingkatkan asupan kalori dengan makanan tinggi protein, lemak sehat, karbohidrat kompleks, dan rajin berolahraga.</p>
+              </div>
+            }
+
+            {modalContentId === "IMTObesitas" &&
+              <div>
+                <p>Hati-hati! Turunkan berat badan dengan mengurangi kalori, gula, garam, lemak, aktif bergerak, dan rutin berolahraga selama 30 menit setiap hari 5 kali seminggu.</p>
+              </div>
+            }
+
+            {modalContentId === "GDRendah" &&
+              <div>
+                <p>Saat mengonsumsi karbohidrat, perhatikan gula darah, dan segera berkonsultasi dengan dokter jika kondisinya semakin parah.</p>
+              </div>
+            }
+
+            {modalContentId === "GDNormal" &&
+              <div>
+                <p>Bagus sekali! Tetap menjaga pola makan sehat, rutin berolahraga, hindari rokok dan alkohol, serta minum obat secara teratur.</p>
+              </div>
+            }
+
+            {modalContentId === "GDTinggi" &&
+              <div>
+                <p>Harus berhati-hati! Batasi konsumsi makanan berkarbohidrat, pantau gula darah, istirahat yang cukup, minum obat, dan berkonsultasi dengan dokter jika mengalami sakit kepala, pusing, mual, atau ambruk tiba-tiba.</p>
+              </div>
+            }
+
+            {(modalContentId === "SistoleRendah" || modalContentId === "DiastoleRendah") &&
+              <div>
+                <p>Segera berkonsultasi dengan dokter jika mengalami gejala kepala pusing, lemas, atau ambruk. Jaga pola makan sehat, istirahat cukup, minum air putih, hindari kopi dan alkohol.</p>
+              </div>
+            }
+
+            {(modalContentId === "SistoleNormal" || modalContentId === "DiastoleNormal") &&
+              <div>
+                <p>Bagus! Tetap menjaga pola makan sehat, hindari makanan manis, asin, dan berlemak.</p>
+              </div>
+            }
+
+            {(modalContentId === "SistoleTinggi" || modalContentId === "DiastoleTinggi") &&
+              <div>
+                <p>Sangat berhati-hati!! Minum obat sesuai petunjuk, konsumsi makanan rendah garam, lemak, dan gula, istirahat cukup, waspada terhadap gejala sakit kepala, mimisan, sesak napas, nyeri dada, dan segera ke dokter.</p>
+              </div>
+            }
+          </div>
+        </Modal>
     </>
   )
 }

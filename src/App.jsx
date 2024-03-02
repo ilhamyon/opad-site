@@ -7,12 +7,13 @@ import Artikel from './pages/Artikel'
 import Video from './pages/Video'
 import Kesehatan from './pages/Kesehatan'
 import Profile from './pages/Profile'
+import DataUser from './pages/DataUser'
 
 function AppContent() {
   const navigate = useLocation();
 
   // Mengecek apakah kita berada di halaman '/' atau '/register'
-  const isHomeOrRegister = navigate.pathname === '/' || navigate.pathname === '/register';
+  const isHomeOrRegister = navigate.pathname === '/' || navigate.pathname === '/register' || navigate.pathname === '/data-user';
 
   return (
     <>
@@ -27,6 +28,7 @@ function AppContent() {
         <Route path="/video" element={<Video />} />
         <Route path="/kesehatan" element={<Kesehatan />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/data-user" element={<DataUser />} />
       </Routes>
     </>
   );
