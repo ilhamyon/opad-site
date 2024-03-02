@@ -97,7 +97,7 @@ function Profile() {
         const data = await response.json();
         console.log('User created:', data);
       } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error update user:', error);
       }
     };
 
