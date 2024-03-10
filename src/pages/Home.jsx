@@ -4,6 +4,7 @@ import { isAuthenticated } from "../utils/auth";
 import { Button, Modal, Select, message } from "antd";
 import JalanCepat from "../assets/jalancepat.mp3"
 import JalanLambat from "../assets/jalanlambat.mp3"
+import TerimaKasih from "../assets/terimakasih.mp3"
 import TimerAudio from "../assets/timer.mp3"
 import { sanityClient } from "../lib/sanity/getClient";
 import moment from "moment";
@@ -83,7 +84,7 @@ function Home() {
 
   const JalanCepatAudio = new Audio(`${JalanCepat}`);
   const JalanLambatAudio = new Audio(`${JalanLambat}`);
-  // const RepeatAudio = new Audio(`${TimerAudio}`);
+  const TerimaKasihAudio = new Audio(`${TerimaKasih}`);
 
   const startTimer = (duration) => {
     const id = setInterval(() => {
@@ -113,6 +114,7 @@ function Home() {
     repeatAudio.currentTime = 0; // Set waktu audio ke awal
     setIsRunning(false);
     setShowButton(true);
+    TerimaKasihAudio.play();
   };
 
   const handleModeChange = (value) => {
@@ -342,9 +344,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriTekananDarah}</span>
               </div>
               <p>Sistole</p>
-              {kategoriTekananDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("SistoleTinggi")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriTekananDarah === 'Rendah' && <Button onClick={() => handleOpenModal("SistoleRendah")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriTekananDarah === 'Normal' && <Button onClick={() => handleOpenModal("SistoleNormal")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("SistoleTinggi")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriTekananDarah === 'Rendah' && <Button onClick={() => handleOpenModal("SistoleRendah")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriTekananDarah === 'Normal' && <Button onClick={() => handleOpenModal("SistoleNormal")} className="absolute mt-44">Anjuran</Button>}
             </div>
           )}
 
@@ -355,9 +357,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
               </div>
               <p>Diastole</p>
-              {kategoriTekananDarahDiastolik === 'Tinggi' && <Button onClick={() => handleOpenModal("DiastoleTinggi")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriTekananDarahDiastolik === 'Rendah' && <Button onClick={() => handleOpenModal("DiastoleRendah")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriTekananDarahDiastolik === 'Normal' && <Button onClick={() => handleOpenModal("DiastoleNormal")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriTekananDarahDiastolik === 'Tinggi' && <Button onClick={() => handleOpenModal("DiastoleTinggi")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriTekananDarahDiastolik === 'Rendah' && <Button onClick={() => handleOpenModal("DiastoleRendah")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriTekananDarahDiastolik === 'Normal' && <Button onClick={() => handleOpenModal("DiastoleNormal")} className="absolute mt-44">Anjuran</Button>}
             </div>
           )}
 
@@ -368,9 +370,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriGulaDarah}</span>
               </div>
               <p>Gula Darah</p>
-              {kategoriGulaDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("GDTinggi")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriGulaDarah === 'Rendah' && <Button onClick={() => handleOpenModal("GDRendah")} className="absolute mt-44">Rekomendasi</Button>}
-              {kategoriGulaDarah === 'Normal' && <Button onClick={() => handleOpenModal("GDNormal")} className="absolute mt-44">Rekomendasi</Button>}
+              {kategoriGulaDarah === 'Tinggi' && <Button onClick={() => handleOpenModal("GDTinggi")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriGulaDarah === 'Rendah' && <Button onClick={() => handleOpenModal("GDRendah")} className="absolute mt-44">Anjuran</Button>}
+              {kategoriGulaDarah === 'Normal' && <Button onClick={() => handleOpenModal("GDNormal")} className="absolute mt-44">Anjuran</Button>}
             </div>
           )}
 
@@ -381,9 +383,9 @@ function Home() {
                 <span className="text-sm font-light">{kategoriIMT}</span>
               </div>
               <p>IMT</p>
-                {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button onClick={() => handleOpenModal("IMTObesitas")} className="absolute mt-44">Rekomendasi</Button>}
-                {(kategoriIMT === 'Kurus' || kategoriIMT === 'Sangat kurus') && <Button onClick={() => handleOpenModal("IMTKurus")} className="absolute mt-44">Rekomendasi</Button>}
-                {kategoriIMT === 'Normal'  && <Button onClick={() => handleOpenModal("IMTNormal")} className="absolute mt-44">Rekomendasi</Button>}
+                {(kategoriIMT === 'Obesitas' || kategoriIMT === 'Overweight') && <Button onClick={() => handleOpenModal("IMTObesitas")} className="absolute mt-44">Anjuran</Button>}
+                {(kategoriIMT === 'Kurus' || kategoriIMT === 'Sangat kurus') && <Button onClick={() => handleOpenModal("IMTKurus")} className="absolute mt-44">Anjuran</Button>}
+                {kategoriIMT === 'Normal'  && <Button onClick={() => handleOpenModal("IMTNormal")} className="absolute mt-44">Anjuran</Button>}
             </div>
           )}
         </div>
@@ -423,55 +425,108 @@ function Home() {
           <div className="mt-6">
             {modalContentId === "IMTNormal" &&
               <div>
-                <p>Bagus! Pertahankan berat badan ideal dengan makan sehat, rutin berolahraga, dan hindari makanan manis, asin, dan berlemak.</p>
+                <ul className="list-disc px-6">
+                  <li>Bagus!</li>
+                  <li>Pertahankan berat badan ideal dengan makan sehat dengan gizi seimbang</li>
+                  <li>Rutin berolahraga minimal 30 menit sehari, 5 kali dalam seminggu</li>
+                  <li>Hindari makanan manis, asin, dan berlemak</li>
+                </ul>
               </div>
             }
 
             {modalContentId === "IMTKurus" &&
               <div>
-                <p>Tingkatkan asupan kalori dengan makanan tinggi protein, lemak sehat, karbohidrat kompleks, dan rajin berolahraga.</p>
+                <ul className="list-disc px-6">
+                  <li>Tingkatkan asupan kalori dengan makanan tinggi protein, lemak sehat, karbohidrat kompleks</li>
+                  <li>Tetap Olahraga</li>
+                  <li>Konsultasikan ke Dokter jika ada penurunan berat badan secara drastis</li>
+                </ul>
               </div>
             }
 
             {modalContentId === "IMTObesitas" &&
               <div>
-                <p>Hati-hati! Turunkan berat badan dengan mengurangi kalori, gula, garam, lemak, aktif bergerak, dan rutin berolahraga selama 30 menit setiap hari 5 kali seminggu.</p>
+                <ul className="list-disc px-6">
+                  <li>Hati-hati!</li>
+                  <li>Tetap konsumsi makanan sehat dengan gizi seimbang</li>
+                  <li>Kurangi dan hindari makanan yang mengandung tinggi gula, garam dan lemak</li>
+                  <li>Konsultasikan ke Dokter dan Ahli Gizi jika ingin memulai program menurunkan berat badan</li>
+                  <li>Lakukan aktivitas olahraga secara rutin minimal 30 menit dalam sehari. 5 kali dalam seminggu</li>
+                  <li>Tingkatkan aktivitas fisik harian dengan lebih banyak gerak dan berjalan kaki</li>
+                  <li>Hindari terlalu lama duduk atau rebahan di luar jam tidur/ jam istirahat</li>
+                </ul>
               </div>
             }
 
             {modalContentId === "GDRendah" &&
               <div>
-                <p>Saat mengonsumsi karbohidrat, perhatikan gula darah, dan segera berkonsultasi dengan dokter jika kondisinya semakin parah.</p>
+                <ul className="list-disc px-6">
+                  <li>Segera konsumsi makanan & minuman mengandung karbohidrat</li>
+                  <li>Pantau selalu kadar gula darah</li>
+                  <li>Segera berkonsultasi dengan dokter jika kondisinya semakin parah</li>
+                </ul>
               </div>
             }
 
             {modalContentId === "GDNormal" &&
               <div>
-                <p>Bagus sekali! Tetap menjaga pola makan sehat, rutin berolahraga, hindari rokok dan alkohol, serta minum obat secara teratur.</p>
+                <ul className="list-disc px-6">
+                  <li>Bagus sekali, Pertahankan!</li>
+                  <li>Tetap menjaga pola makan sehat dan seimbang</li>
+                  <li>Rutin berolahraga minimal 30 menit sehari selama 5 kali dalam seminggu</li>
+                  <li>Hindari rokok dan alkohol</li>
+                  <li>Tetap minum obat secara teratur</li>
+                </ul>
               </div>
             }
 
             {modalContentId === "GDTinggi" &&
               <div>
-                <p>Harus berhati-hati! Batasi konsumsi makanan berkarbohidrat, pantau gula darah, istirahat yang cukup, minum obat, dan berkonsultasi dengan dokter jika mengalami sakit kepala, pusing, mual, atau ambruk tiba-tiba.</p>
+                <ul className="list-disc px-6">
+                  <li>Waspada!</li>
+                  <li>Batasi konsumsi makanan berkarbohidrat dan hindari makanan/minuman tinggi gula</li>
+                  <li>Pantau gula darah secara teratur</li>
+                  <li>Istirahat yang cukup</li>
+                  <li>Teratur minum obat</li>
+                  <li>Konsultasikan ke dokter jika mengalami sakit kepala, pusing, dan mual</li>
+                  <li>Rujuk segera bila pingsan tiba-tiba</li>
+                </ul>
               </div>
             }
 
             {(modalContentId === "SistoleRendah" || modalContentId === "DiastoleRendah") &&
               <div>
-                <p>Segera berkonsultasi dengan dokter jika mengalami gejala kepala pusing, lemas, atau ambruk. Jaga pola makan sehat, istirahat cukup, minum air putih, hindari kopi dan alkohol.</p>
+                <ul className="list-disc px-6">
+                  <li>Segera berkonsultasi dengan dokter jika mengalami gejala kepala pusing, dan lemas</li>
+                  <li>Jangan berdiri secara tiba-tiba</li>
+                  <li>Jaga pola makan sehat dengan gizi seimbang</li>
+                  <li>Istirahat yang cukup</li>
+                  <li>Minum air putih yang cukup</li>
+                  <li>Hindari kopi dan alkohol</li>
+                </ul>
               </div>
             }
 
             {(modalContentId === "SistoleNormal" || modalContentId === "DiastoleNormal") &&
               <div>
-                <p>Bagus! Tetap menjaga pola makan sehat, hindari makanan manis, asin, dan berlemak.</p>
+                <ul className="list-disc px-6">
+                  <li>Bagus! Pertahankan</li>
+                  <li>Tetap menjaga pola makan sehat</li>
+                  <li>Hindari hindari makanan tinggi gula, garam dan lemak</li>
+                </ul>
               </div>
             }
 
             {(modalContentId === "SistoleTinggi" || modalContentId === "DiastoleTinggi") &&
               <div>
-                <p>Sangat berhati-hati!! Minum obat sesuai petunjuk, konsumsi makanan rendah garam, lemak, dan gula, istirahat cukup, waspada terhadap gejala sakit kepala, mimisan, sesak napas, nyeri dada, dan segera ke dokter.</p>
+                <ul className="list-disc px-6">
+                  <li>Hati-hati!!</li>
+                  <li>Minum obat sesuai petunjuk secara teratur</li>
+                  <li>Konsumsi makanan rendah garam, lemak, dan gula</li>
+                  <li>Istirahat cukup</li>
+                  <li>Lakukan relaksasi</li>
+                  <li>Waspada, segera ke Dokter jika mengalami gejala sakit kepala berat, mimisan, sesak napas, dan nyeri dada</li>
+                </ul>
               </div>
             }
           </div>
