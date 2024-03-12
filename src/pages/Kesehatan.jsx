@@ -456,17 +456,21 @@ function Kesehatan() {
 
     const CustomTooltip = ({ active, payload, label }) => {
       if (active && payload && payload.length) {
+        const sistole = payload.find(data => data.dataKey === 'sistole');
+        const diastole = payload.find(data => data.dataKey === 'diastole');
+        const kategoriTekananDarah = tentukanKategoriTekananDarah(sistole?.value);
+        const kategoriTekananDarahDiastolik = tentukanKategoriTekananDarahDiastolik(diastole?.value);
+    
         return (
           <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
             <p className="label text-xs">{`${label}`}</p>
-            <p className="intro text-xs">{`Sistole: ${payload[0].value} mmHg (${kategoriTekananDarah})`}</p>
-            <p className="intro text-xs">{`Diastole: ${payload[1].value} mmHg (${kategoriTekananDarahDiastolik})`}</p>
+            <p className="intro text-xs">{`Sistole: ${sistole?.value} mmHg (${kategoriTekananDarah})`}</p>
+            <p className="intro text-xs">{`Diastole: ${diastole?.value} mmHg (${kategoriTekananDarahDiastolik})`}</p>
           </div>
         );
       }
-    
       return null;
-    };    
+    };       
   
     const tentukanKategoriGulaDarah = (gulaDarah) => {
       if (gulaDarah < 80) {
@@ -484,6 +488,8 @@ function Kesehatan() {
 
     const CustomTooltipGD = ({ active, payload, label }) => {
       if (active && payload && payload.length) {
+        const gulaDarah = payload[0].payload.guladarah;
+        const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
         return (
           <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
             <p className="label text-xs">{`${label}`}</p>
@@ -493,7 +499,7 @@ function Kesehatan() {
       }
     
       return null;
-    };  
+    };    
   
     const tinggiBadan = dataSourceIMT[0]?.tb;
     const tinggiBadanM = tinggiBadan / 100;
@@ -520,11 +526,17 @@ function Kesehatan() {
 
     const CustomTooltipIMT = ({ active, payload, label }) => {
       if (active && payload && payload.length) {
+        const tinggiBadan = payload.find(data => data.dataKey === 'tb');
+        const beratBadan = payload.find(data => data.dataKey === 'bb');
+        const iMT = beratBadan?.value / ((tinggiBadan?.value / 100) * (tinggiBadan?.value / 100));
+        const iMTBulat = iMT.toFixed(2);
+        const kategoriIMT = tentukanKategoriIMT(iMTBulat);
+    
         return (
           <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
             <p className="label text-xs">{`${label}`}</p>
-            <p className="intro text-xs">{`Tinggi badan: ${payload[0].value} cm`}</p>
-            <p className="intro text-xs">{`Berat badan: ${payload[1].value} kg`}</p>
+            <p className="intro text-xs">{`Tinggi badan: ${tinggiBadan?.value} cm`}</p>
+            <p className="intro text-xs">{`Berat badan: ${beratBadan?.value} kg`}</p>
             <p className="intro text-xs">{`IMT: ${iMTBulat} (${kategoriIMT})`}</p>
           </div>
         );
@@ -532,6 +544,7 @@ function Kesehatan() {
     
       return null;
     };
+    
     return (
       <div className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
           <div className="border-b-2 border-gray-400">
