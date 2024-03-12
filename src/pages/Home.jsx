@@ -493,19 +493,19 @@ function Home() {
           <div className="flex flex-col justify-center text-center items-center">
             <Link to="/video">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://media.istockphoto.com/id/1359055641/id/video/rekan-dokter-di-rumah-sakit-mendiskusikan-kasus-saat-berjalan-di-koridor-rumah-sakit.jpg?s=640x640&k=20&c=Nj6IAu2Yu6R4OPfEpkYFvuprz0QiiYWM3a-r225uOA0=" />
-              <p className="text-center text-sm">Video<br/> &nbsp;</p>
+              <p className="text-center">Video<br/> &nbsp;</p>
             </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
             <Link to="/artikel">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://blogs.insanmedika.co.id/wp-content/uploads/2020/05/Tugas-Perawat.jpg" />
-              <p className="text-center text-sm">Artikel<br/> &nbsp;</p>
+              <p className="text-center">Artikel<br/> &nbsp;</p>
             </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
             <a href="https://wa.me/6285326698776?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://awsimages.detik.net.id/community/media/visual/2020/05/05/c7f69650-d103-46d4-992c-d5e876968a6e.jpeg?w=600&q=90" />
-              <p className="text-center text-sm">Hubungi Perawat</p>
+              <p className="text-center">Hubungi Perawat</p>
             </a>
           </div>
         </div>
