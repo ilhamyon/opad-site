@@ -478,7 +478,7 @@ function Kesehatan() {
       }
     };
   
-    const gulaDarah = serverDataGulaDarah[0]?.guladarah;
+    const gulaDarah = dataSourceGD[0]?.guladarah;
     const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
     console.log("cek gula darah: ", kategoriGulaDarah)
 
@@ -495,12 +495,12 @@ function Kesehatan() {
       return null;
     };  
   
-    const tinggiBadan = serverDataIMT?.data[0]?.tb;
+    const tinggiBadan = dataSourceIMT[0]?.tb;
     const tinggiBadanM = tinggiBadan / 100;
-    const beratBadan = serverDataIMT?.data[0]?.bb;
+    const beratBadan = dataSourceIMT[0]?.bb;
     const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
     const iMTBulat = iMT.toFixed(2);
-    console.log('tb: ', iMTBulat);
+    console.log('IMT: ', iMTBulat);
   
     const tentukanKategoriIMT = (iMT) => {
       if (iMT < 17) {

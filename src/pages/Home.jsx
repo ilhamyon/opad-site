@@ -290,7 +290,7 @@ function Home() {
   const beratBadan = dataSourceIMT[0]?.bb;
   const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
   const iMTBulat = iMT.toFixed(2);
-  console.log('tb: ', iMTBulat);
+  console.log('IMT: ', iMTBulat);
 
   const tentukanKategoriIMT = (iMT) => {
     if (iMT < 17) {
