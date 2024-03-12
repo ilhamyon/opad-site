@@ -14,6 +14,7 @@ const { Option } = Select;
 function Home() {
   const navigate = useNavigate();
   const opadId = (localStorage.getItem('opadId'));
+  const opadUser = (localStorage.getItem('opadUser'));
   console.log('cek id user: ', opadId)
 
   useEffect(() => {
@@ -25,54 +26,151 @@ function Home() {
     }
   }, [navigate]);
 
-  const [serverData, setServerData] = useState({
+  const [isLoading, setIsLoading] = useState(true);
+  const [serverDataTekananDarah, setServerDataTekananDarah] = useState({
     data: [],
     error: null,
     loading: true,
   });
 
-  useEffect(() => {
-    async function fetchSanityData() {
-      try {
-        const sanityData = await sanityClient.fetch(`*[_type == 'user-opad']{
-          _id,
-          name,
-          email,
-          type,
-          password,
-          ttl,
-          gender,
-          alamat,
-          datetk,
-          tekanandarah,
-          tekanandarah2,
-          dategd,
-          guladarah,
-          tb,
-          bb,
-          telepon
-        }`);
+  async function fetchSanityDataTK() {
+    try {
+      setIsLoading(true);
+      const sanityData = await sanityClient.fetch(`*[_type == 'opad-tekanandarah']{
+        _id,
+        sistole,
+        diastole,
+        date,
+        user,
+      }`);
 
-        // Filter the data array based on opadId
-        const filteredData = sanityData.filter(item => item._id === opadId);
-
-        setServerData({
-          data: filteredData,
-          error: null,
-          loading: false,
-        });
-      } catch (error) {
-        setServerData({
-          data: [],
-          error: 'Error getting data. Please try again later.',
-          loading: false,
-        });
-      }
+      setServerDataTekananDarah({
+        data: sanityData,
+        error: null,
+        loading: false,
+      });
+    } catch (error) {
+      setServerDataTekananDarah({
+        data: [],
+        error: 'Error getting data. Please try again later.',
+        loading: false,
+      });
+    } finally {
+      setIsLoading(false);
     }
+  }
 
-    fetchSanityData();
+  const [serverDataGulaDarah, setServerDataGulaDarah] = useState({
+    data: [],
+    error: null,
+    loading: true,
+  });
+
+  async function fetchSanityDataGD() {
+    try {
+      setIsLoading(true);
+      const sanityData = await sanityClient.fetch(`*[_type == 'opad-guladarah']{
+        _id,
+        guladarah,
+        date,
+        user,
+      }`);
+
+      setServerDataGulaDarah({
+        data: sanityData,
+        error: null,
+        loading: false,
+      });
+    } catch (error) {
+      setServerDataGulaDarah({
+        data: [],
+        error: 'Error getting data. Please try again later.',
+        loading: false,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const [serverDataIMT, setServerDataIMT] = useState({
+    data: [],
+    error: null,
+    loading: true,
+  });
+
+  async function fetchSanityDataIMT() {
+    try {
+      setIsLoading(true);
+      const sanityData = await sanityClient.fetch(`*[_type == 'opad-imt']{
+        _id,
+        tb,
+        bb,
+        date,
+        user,
+      }`);
+
+      setServerDataIMT({
+        data: sanityData,
+        error: null,
+        loading: false,
+      });
+    } catch (error) {
+      setServerDataIMT({
+        data: [],
+        error: 'Error getting data. Please try again later.',
+        loading: false,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchSanityDataTK();
+    fetchSanityDataGD();
+    fetchSanityDataIMT();
   }, []);
-  console.log('cek data home: ', serverData)
+
+  let dataSourceTK = [];
+    if (serverDataTekananDarah && serverDataTekananDarah.data && serverDataTekananDarah.data.length > 0) {
+      dataSourceTK = serverDataTekananDarah.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        sistole: item.sistole,
+        diastole: item.diastole,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data tekanan darah: ', dataSourceTK)
+
+    let dataSourceGD = [];
+    if (serverDataGulaDarah && serverDataGulaDarah.data && serverDataGulaDarah.data.length > 0) {
+      dataSourceGD = serverDataGulaDarah.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        guladarah: item.guladarah,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data gula darah: ', dataSourceGD)
+
+    let dataSourceIMT = [];
+    if (serverDataIMT && serverDataIMT.data && serverDataIMT.data.length > 0) {
+      dataSourceIMT = serverDataIMT.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        tb: item.tb,
+        bb: item.bb,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data tekanan darah: ', dataSourceIMT)
 
   const [time, setTime] = useState(0);
   const [instruction, setInstruction] = useState('');
@@ -157,7 +255,7 @@ function Home() {
     }
   };
 
-  const sistole = serverData?.data[0]?.tekanandarah;
+  const sistole = dataSourceTK[0]?.sistole;
   const kategoriTekananDarah = tentukanKategoriTekananDarah(sistole);
 
   const tentukanKategoriTekananDarahDiastolik = (diastole) => {
@@ -170,7 +268,7 @@ function Home() {
     }
   };
 
-  const diastole = serverData?.data[0]?.tekanandarah2;
+  const diastole = dataSourceTK[0]?.diastole;
   const kategoriTekananDarahDiastolik = tentukanKategoriTekananDarahDiastolik(diastole);
 
   const tentukanKategoriGulaDarah = (gulaDarah) => {
@@ -183,13 +281,13 @@ function Home() {
     }
   };
 
-  const gulaDarah = serverData?.data[0]?.guladarah;
+  const gulaDarah = dataSourceGD[0]?.guladarah;
   const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
   console.log("cek gula darah: ", kategoriGulaDarah)
 
-  const tinggiBadan = serverData?.data[0]?.tb;
+  const tinggiBadan = dataSourceIMT[0]?.tb;
   const tinggiBadanM = tinggiBadan / 100;
-  const beratBadan = serverData?.data[0]?.bb;
+  const beratBadan = dataSourceIMT[0]?.bb;
   const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
   const iMTBulat = iMT.toFixed(2);
   console.log('tb: ', iMTBulat);
@@ -300,7 +398,7 @@ function Home() {
       <section className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
         <div className="bg-sky-950 text-white py-6">
           <h3 className="text-2xl px-4 font-semibold">Selamat Datang</h3>
-          <hp className="text-lg px-4">{serverData?.data[0]?.name}</hp>
+          <hp className="text-lg px-4">{opadUser}</hp>
         </div>
 
         <div className="px-4 mt-10">
@@ -337,10 +435,10 @@ function Home() {
         </div>
 
         <div className="p-4 grid grid-cols-2 gap-14 py-16">
-          {serverData?.data[0]?.tekanandarah && (
+          {dataSourceTK[0]?.sistole && (
             <div className="flex flex-col justify-center text-center items-center">
               <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarah === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-                {serverData?.data[0]?.tekanandarah}<br/>
+                {dataSourceTK[0]?.sistole}<br/>
                 <span className="text-sm font-light">{kategoriTekananDarah}</span>
               </div>
               <p>Sistole</p>
@@ -350,10 +448,10 @@ function Home() {
             </div>
           )}
 
-          {serverData?.data[0]?.tekanandarah2 && (
+          {dataSourceTK[0]?.diastole && (
             <div className="flex flex-col justify-center text-center items-center">
               <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriTekananDarahDiastolik === 'Rendah' ? 'bg-yellow-500' : kategoriTekananDarahDiastolik === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-                {serverData?.data[0]?.tekanandarah2}<br/>
+                {dataSourceTK[0]?.diastole}<br/>
                 <span className="text-sm font-light">{kategoriTekananDarahDiastolik}</span>
               </div>
               <p>Diastole</p>
@@ -363,10 +461,10 @@ function Home() {
             </div>
           )}
 
-          {serverData?.data[0]?.guladarah && (
+          {dataSourceGD[0]?.guladarah && (
             <div className="flex flex-col justify-center text-center items-center">
               <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriGulaDarah === 'Rendah' ? 'bg-yellow-500' : kategoriGulaDarah === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
-                {serverData?.data[0]?.guladarah}<br/>
+                {dataSourceGD[0]?.guladarah}<br/>
                 <span className="text-sm font-light">{kategoriGulaDarah}</span>
               </div>
               <p>Gula Darah</p>
@@ -376,7 +474,7 @@ function Home() {
             </div>
           )}
 
-          {serverData?.data[0]?.tb && (
+          {dataSourceIMT[0]?.tb && (
             <div className="flex flex-col justify-center text-center items-center">
               <div className={`w-28 h-28 rounded-full flex flex-col justify-center items-center text-white text-2xl font-bold ${kategoriIMT === 'Sangat kurus' || kategoriIMT === 'Kurus'  ? 'bg-yellow-500' : kategoriIMT === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`}>
                 {iMTBulat}<br/>
@@ -395,19 +493,19 @@ function Home() {
           <div className="flex flex-col justify-center text-center items-center">
             <Link to="/video">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://media.istockphoto.com/id/1359055641/id/video/rekan-dokter-di-rumah-sakit-mendiskusikan-kasus-saat-berjalan-di-koridor-rumah-sakit.jpg?s=640x640&k=20&c=Nj6IAu2Yu6R4OPfEpkYFvuprz0QiiYWM3a-r225uOA0=" />
-              <p className="text-center">Video<br/> &nbsp;</p>
+              <p className="text-center text-sm">Video<br/> &nbsp;</p>
             </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
             <Link to="/artikel">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://blogs.insanmedika.co.id/wp-content/uploads/2020/05/Tugas-Perawat.jpg" />
-              <p className="text-center">Artikel<br/> &nbsp;</p>
+              <p className="text-center text-sm">Artikel<br/> &nbsp;</p>
             </Link>
           </div>
           <div className="flex flex-col justify-center text-center items-center">
             <a href="https://wa.me/6285326698776?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
               <img className="rounded-2xl w-28 h-28 object-cover" src="https://awsimages.detik.net.id/community/media/visual/2020/05/05/c7f69650-d103-46d4-992c-d5e876968a6e.jpeg?w=600&q=90" />
-              <p className="text-center">Hubungi Perawat</p>
+              <p className="text-center text-sm">Hubungi Perawat</p>
             </a>
           </div>
         </div>

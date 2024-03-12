@@ -4,6 +4,9 @@ import { sanityClient } from "../lib/sanity/getClient";
 import { isAuthenticated } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+
 
 const columns = [
   {
@@ -32,151 +35,6 @@ function Kesehatan() {
         navigate("/");
       }
     }, [navigate]);
-
-    const [serverData, setServerData] = useState({
-      data: [],
-      error: null,
-      loading: true,
-    });
-
-    useEffect(() => {
-      async function fetchSanityData() {
-        try {
-          const sanityData = await sanityClient.fetch(`*[_type == 'user-opad']{
-            _id,
-            name,
-            email,
-            type,
-            password,
-            ttl,
-            gender,
-            alamat,
-            datetk,
-            tekanandarah,
-            tekanandarah2,
-            dategd,
-            guladarah,
-            tb,
-            bb,
-            telepon
-          }`);
-
-          // Filter the data array based on opadId
-          const filteredData = sanityData.filter(item => item._id === opadId);
-
-          setServerData({
-            data: filteredData,
-            error: null,
-            loading: false,
-          });
-        } catch (error) {
-          setServerData({
-            data: [],
-            error: 'Error getting data. Please try again later.',
-            loading: false,
-          });
-        }
-      }
-
-      fetchSanityData();
-    }, []);
-    console.log('cek data: ', serverData)
-
-    const updateSanityUser = async (opadData) => {
-      try {
-        const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
-          },
-          body: JSON.stringify({
-            mutations: [
-              {
-                patch: {
-                  id: opadId, // The _id of the document to update
-                  set: {
-                    datetk: opadData.datetk,
-                    tekanandarah: opadData.tekanandarah,
-                    tekanandarah2: opadData.tekanandarah2,
-                    dategd: opadData.dategd,
-                    guladarah: opadData.guladarah,
-                    tb: opadData.tb,
-                    bb: opadData.bb,
-                  },
-                },
-              },
-            ],
-          }),
-        });
-    
-        if (!response.ok) {
-          throw new Error('Failed to create user in Sanity');
-        }
-    
-        const data = await response.json();
-        console.log('User created:', data);
-      } catch (error) {
-        console.error('Error creating user:', error);
-      }
-    };
-
-    const [formUpdate, setFormUpdate] = useState({
-      datetk: null,
-      tekanandarah: "",
-      tekanandarah2: "",
-      dategd: null,
-      guladarah: "",
-      tb: "",
-      bb: ""
-    });
-
-    useEffect(() => {
-      setFormUpdate({
-        datetk: serverData?.data[0]?.datetk || "",
-        tekanandarah: serverData?.data[0]?.tekanandarah || "",
-        tekanandarah2: serverData?.data[0]?.tekanandarah2 || "",
-        dategd: serverData?.data[0]?.dategd || "",
-        guladarah: serverData?.data[0]?.guladarah || "",
-        tb: serverData?.data[0]?.tb || "",
-        bb: serverData?.data[0]?.bb || "",
-      });
-    }, [serverData]);
-
-    const handleUpdateChange = (e) => {
-      const { name, value } = e.target;
-      setFormUpdate({ ...formUpdate, [name]: value });
-    };
-
-    const handleUpdateChangeDate = (date, dateString) => {
-      if (dateString && moment(dateString, 'YYYY-MM-DD', true).isValid()) {
-        setFormUpdate({ ...formUpdate, datetk: dateString });
-      } else {
-        // Tanggal tidak valid, Anda bisa menangani ini sesuai kebutuhan Anda
-      }
-    };
-
-    const handleUpdateChangeDateGD = (date, dateString) => {
-      if (dateString && moment(dateString, 'YYYY-MM-DD', true).isValid()) {
-        setFormUpdate({ ...formUpdate, dategd: dateString });
-      } else {
-        // Tanggal tidak valid, Anda bisa menangani ini sesuai kebutuhan Anda
-      }
-    };
-
-    async function handleSubmit(event) {
-      event.preventDefault();
-      try {
-        // Send POST request to your Sanity backend to create a new user
-        await updateSanityUser(formUpdate);
-
-        message.success("Update data berhasil.")
-        localStorage.setItem('opadData', JSON.stringify(serverData));
-
-      } catch (error) {
-        console.error('Error registering user:', error);
-      }
-    }
 
     const [isLoading, setIsLoading] = useState(true);
     const [serverDataLatihan, setServerDataLatihan] = useState({
@@ -227,6 +85,349 @@ function Kesehatan() {
     }
     console.log('cek data latihan: ', dataSource)
 
+    const createSanityTekananDarah = async (userData) => {
+      try {
+        const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
+          },
+          body: JSON.stringify({
+            mutations: [
+              {
+                create: {
+                  _type: 'opad-tekanandarah', // Ganti dengan jenis dokumen pengguna di Sanity Anda
+                  user: {
+                    _type: 'reference',
+                    _ref: opadId // Assuming userData.userId contains the ID of the user document
+                  },
+                  sistole: userData.sistole,
+                  diastole: userData.diastole,
+                  date: userData.date,
+                },
+              },
+            ],
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to create user in Sanity');
+        }
+    
+        const data = await response.json();
+        console.log('User created:', data);
+      } catch (error) {
+        console.error('Error creating user:', error);
+      }
+    };
+  
+    const [formData, setFormData] = useState({
+      user: {
+        _type: 'reference',
+        _ref: opadId
+      },
+      sistole: '',
+      diastole: '',
+      date: '',
+    });
+
+    async function handleSubmitTekananDarah(event) {
+      event.preventDefault();
+      try {
+        // Send POST request to your Sanity backend to create a new user
+        await createSanityTekananDarah(formData);
+  
+        message.success("Berhasil menambahkan data.")
+        fetchSanityDataTK();
+  
+        // Reset the form after successful registration
+        setFormData({
+          sistole: '',
+          diastole: '',
+          date: '',
+        });
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
+    }
+
+    const [serverDataTekananDarah, setServerDataTekananDarah] = useState({
+      data: [],
+      error: null,
+      loading: true,
+    });
+  
+    async function fetchSanityDataTK() {
+      try {
+        setIsLoading(true);
+        const sanityData = await sanityClient.fetch(`*[_type == 'opad-tekanandarah']{
+          _id,
+          sistole,
+          diastole,
+          date,
+          user,
+        }`);
+
+        setServerDataTekananDarah({
+          data: sanityData,
+          error: null,
+          loading: false,
+        });
+      } catch (error) {
+        setServerDataTekananDarah({
+          data: [],
+          error: 'Error getting data. Please try again later.',
+          loading: false,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    const createSanityGulaDarah = async (userData) => {
+      try {
+        const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
+          },
+          body: JSON.stringify({
+            mutations: [
+              {
+                create: {
+                  _type: 'opad-guladarah', // Ganti dengan jenis dokumen pengguna di Sanity Anda
+                  user: {
+                    _type: 'reference',
+                    _ref: opadId // Assuming userData.userId contains the ID of the user document
+                  },
+                  guladarah: userData.guladarah,
+                  date: userData.date,
+                },
+              },
+            ],
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to create user in Sanity');
+        }
+    
+        const data = await response.json();
+        console.log('User created:', data);
+      } catch (error) {
+        console.error('Error creating user:', error);
+      }
+    };
+  
+    const [formDataGD, setFormDataGD] = useState({
+      user: {
+        _type: 'reference',
+        _ref: opadId
+      },
+      guladarah: '',
+      date: '',
+    });
+
+    async function handleSubmitGulaDarah(event) {
+      event.preventDefault();
+      try {
+        // Send POST request to your Sanity backend to create a new user
+        await createSanityGulaDarah(formDataGD);
+  
+        message.success("Berhasil menambahkan data.")
+        fetchSanityDataGD();
+  
+        // Reset the form after successful registration
+        setFormData({
+          guladarah: '',
+          date: '',
+        });
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
+    }
+
+    const [serverDataGulaDarah, setServerDataGulaDarah] = useState({
+      data: [],
+      error: null,
+      loading: true,
+    });
+  
+    async function fetchSanityDataGD() {
+      try {
+        setIsLoading(true);
+        const sanityData = await sanityClient.fetch(`*[_type == 'opad-guladarah']{
+          _id,
+          guladarah,
+          date,
+          user,
+        }`);
+
+        setServerDataGulaDarah({
+          data: sanityData,
+          error: null,
+          loading: false,
+        });
+      } catch (error) {
+        setServerDataGulaDarah({
+          data: [],
+          error: 'Error getting data. Please try again later.',
+          loading: false,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    const createSanityIMT = async (userData) => {
+      try {
+        const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
+          },
+          body: JSON.stringify({
+            mutations: [
+              {
+                create: {
+                  _type: 'opad-imt', // Ganti dengan jenis dokumen pengguna di Sanity Anda
+                  user: {
+                    _type: 'reference',
+                    _ref: opadId // Assuming userData.userId contains the ID of the user document
+                  },
+                  tb: userData.tb,
+                  bb: userData.bb,
+                  date: userData.date,
+                },
+              },
+            ],
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to create user in Sanity');
+        }
+    
+        const data = await response.json();
+        console.log('User created:', data);
+      } catch (error) {
+        console.error('Error creating user:', error);
+      }
+    };
+  
+    const [formDataIMT, setFormDataIMT] = useState({
+      user: {
+        _type: 'reference',
+        _ref: opadId
+      },
+      tb: '',
+      bb: '',
+      date: '',
+    });
+
+    async function handleSubmitIMT(event) {
+      event.preventDefault();
+      try {
+        // Send POST request to your Sanity backend to create a new user
+        await createSanityIMT(formDataIMT);
+  
+        message.success("Berhasil menambahkan data.")
+        fetchSanityDataIMT();
+  
+        // Reset the form after successful registration
+        setFormDataIMT({
+          tb: '',
+          bb: '',
+          date: '',
+        });
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
+    }
+
+    const [serverDataIMT, setServerDataIMT] = useState({
+      data: [],
+      error: null,
+      loading: true,
+    });
+  
+    async function fetchSanityDataIMT() {
+      try {
+        setIsLoading(true);
+        const sanityData = await sanityClient.fetch(`*[_type == 'opad-imt']{
+          _id,
+          tb,
+          bb,
+          date,
+          user,
+        }`);
+
+        setServerDataIMT({
+          data: sanityData,
+          error: null,
+          loading: false,
+        });
+      } catch (error) {
+        setServerDataIMT({
+          data: [],
+          error: 'Error getting data. Please try again later.',
+          loading: false,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    useEffect(() => {
+      fetchSanityDataTK();
+      fetchSanityDataGD();
+      fetchSanityDataIMT();
+    }, []);
+
+    let dataSourceTK = [];
+    if (serverDataTekananDarah && serverDataTekananDarah.data && serverDataTekananDarah.data.length > 0) {
+      dataSourceTK = serverDataTekananDarah.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        sistole: item.sistole,
+        diastole: item.diastole,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data tekanan darah: ', dataSourceTK)
+
+    let dataSourceGD = [];
+    if (serverDataGulaDarah && serverDataGulaDarah.data && serverDataGulaDarah.data.length > 0) {
+      dataSourceGD = serverDataGulaDarah.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        guladarah: item.guladarah,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data gula darah: ', dataSourceGD)
+
+    let dataSourceIMT = [];
+    if (serverDataIMT && serverDataIMT.data && serverDataIMT.data.length > 0) {
+      dataSourceIMT = serverDataIMT.data
+      .filter(item => item.user?._ref === opadId)
+      .sort((a, b) => moment(b.date) - moment(a.date))
+      .map((item) => ({
+        key: item._id,
+        tb: item.tb,
+        bb: item.bb,
+        date: moment(item.date).format('MM/DD/YYYY') || "-"
+      }));
+    }
+    console.log('cek data tekanan darah: ', dataSourceIMT)
+
     const tentukanKategoriTekananDarah = (sistole) => {
       if (sistole < 90) {
           return "Rendah";
@@ -237,7 +438,7 @@ function Kesehatan() {
       }
     };
   
-    const sistole = serverData?.data[0]?.tekanandarah;
+    const sistole = dataSourceTK[0]?.sistole;
     const kategoriTekananDarah = tentukanKategoriTekananDarah(sistole);
   
     const tentukanKategoriTekananDarahDiastolik = (diastole) => {
@@ -250,8 +451,22 @@ function Kesehatan() {
       }
     };
   
-    const diastole = serverData?.data[0]?.tekanandarah2;
+    const diastole = dataSourceTK[0]?.diastole;
     const kategoriTekananDarahDiastolik = tentukanKategoriTekananDarahDiastolik(diastole);
+
+    const CustomTooltip = ({ active, payload, label }) => {
+      if (active && payload && payload.length) {
+        return (
+          <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
+            <p className="label text-xs">{`${label}`}</p>
+            <p className="intro text-xs">{`Sistole: ${payload[0].value} mmHg (${kategoriTekananDarah})`}</p>
+            <p className="intro text-xs">{`Diastole: ${payload[1].value} mmHg (${kategoriTekananDarahDiastolik})`}</p>
+          </div>
+        );
+      }
+    
+      return null;
+    };    
   
     const tentukanKategoriGulaDarah = (gulaDarah) => {
       if (gulaDarah < 80) {
@@ -263,13 +478,26 @@ function Kesehatan() {
       }
     };
   
-    const gulaDarah = serverData?.data[0]?.guladarah;
+    const gulaDarah = serverDataGulaDarah[0]?.guladarah;
     const kategoriGulaDarah = tentukanKategoriGulaDarah(gulaDarah);
     console.log("cek gula darah: ", kategoriGulaDarah)
+
+    const CustomTooltipGD = ({ active, payload, label }) => {
+      if (active && payload && payload.length) {
+        return (
+          <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
+            <p className="label text-xs">{`${label}`}</p>
+            <p className="intro text-xs">{`Gula darah: ${payload[0].value} gr/dl (${kategoriGulaDarah})`}</p>
+          </div>
+        );
+      }
+    
+      return null;
+    };  
   
-    const tinggiBadan = serverData?.data[0]?.tb;
+    const tinggiBadan = serverDataIMT?.data[0]?.tb;
     const tinggiBadanM = tinggiBadan / 100;
-    const beratBadan = serverData?.data[0]?.bb;
+    const beratBadan = serverDataIMT?.data[0]?.bb;
     const iMT = beratBadan / (tinggiBadanM * tinggiBadanM);
     const iMTBulat = iMT.toFixed(2);
     console.log('tb: ', iMTBulat);
@@ -289,6 +517,21 @@ function Kesehatan() {
     };
   
     const kategoriIMT = tentukanKategoriIMT(iMTBulat);
+
+    const CustomTooltipIMT = ({ active, payload, label }) => {
+      if (active && payload && payload.length) {
+        return (
+          <div className="custom-tooltip" style={{ backgroundColor: '#ffff', padding: '5px', border: '1px solid #cccc' }}>
+            <p className="label text-xs">{`${label}`}</p>
+            <p className="intro text-xs">{`Tinggi badan: ${payload[0].value} cm`}</p>
+            <p className="intro text-xs">{`Berat badan: ${payload[1].value} kg`}</p>
+            <p className="intro text-xs">{`IMT: ${iMTBulat} (${kategoriIMT})`}</p>
+          </div>
+        );
+      }
+    
+      return null;
+    };
     return (
       <div className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
           <div className="border-b-2 border-gray-400">
@@ -299,67 +542,89 @@ function Kesehatan() {
             <Collapse defaultActiveKey={['1']}>
               <Collapse.Panel header="Tekanan Darah" key="1">
                 <div className="py-6">
-                  <form className="px-4 items-center" onSubmit={handleSubmit}>
+                  <form className="px-4 items-center" onSubmit={handleSubmitTekananDarah}>
                   {/* <h2 className="font-bold text-[18px] lg:text-4xl mb-10 text-gray-900 uppercase">Biodata <br/><span className="text-xl">({opadData[0]?.name})</span></h2> */}
                     <DatePicker
-                      name="datetk"
+                      name="date"
                       placeholder="Tanggal Pemeriksaan"
                       size="large"
                       className="mb-4 border w-full"
-                      value={formUpdate.datetk ? moment(formUpdate.datetk, 'YYYY-MM-DD') : null}
-                      onChange={handleUpdateChangeDate}
                       required
+                      value={formData.date}
+                      onChange={(date) => setFormData({ ...formData, date })}
                     />
                     <Input
                       type="number"
-                      name="tekanandarah"
+                      name="sistole"
                       placeholder="Sistole"
                       size="large"
                       className="mb-4 border"
-                      value={formUpdate.tekanandarah}
-                      onChange={handleUpdateChange}
                       required
+                      value={formData.sistole}
+                      onChange={(e) => setFormData({ ...formData, sistole: e.target.value })}
                     />
                     <Input
                       type="number"
-                      name="tekanandarah2"
+                      name="diastole"
                       placeholder="Disastole"
                       size="large"
                       className="mb-8 border"
-                      value={formUpdate.tekanandarah2}
-                      onChange={handleUpdateChange}
+                      value={formData.diastole}
+                      onChange={(e) => setFormData({ ...formData, diastole: e.target.value })}
                     />
                     <Button
                       className="text-white bg-sky-950 w-full"
                       htmlType="submit"
                       size="large"
                     >
-                      Update
+                      Submit
                     </Button>
                   </form>
 
-                  {serverData?.data[0]?.tekanandarah && (
-                    <div className="mt-6 px-4">
-                      <h3 className="font-semibold text-lg">Riwayat:</h3>
-                      <p>Tanggal pemeriksaan: <span className="font-semibold">{moment(serverData?.data[0]?.datetk).format('DD MMMM YYYY')}</span></p>
-                      <p>Sistole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah} mmhg ({kategoriTekananDarah})</span></p>
-                      <p>Diastole: <span className="font-semibold">{serverData?.data[0]?.tekanandarah2} mmhg ({kategoriTekananDarahDiastolik})</span></p>
+                  {dataSourceTK[0]?.sistole && (
+                    <div className="mt-6">
+                      <h3 className="font-semibold text-lg px-4">Riwayat:</h3>
+                      <p className="px-4">Tanggal pemeriksaan: <span className="font-semibold">{moment(dataSourceTK[0]?.date).format('DD MMMM YYYY')}</span></p>
+                      <p className="px-4">Sistole: <span className="font-semibold">{dataSourceTK[0]?.sistole} mmhg ({kategoriTekananDarah})</span></p>
+                      <p className="px-4">Diastole: <span className="font-semibold">{dataSourceTK[0]?.diastole} mmhg ({kategoriTekananDarahDiastolik})</span></p>
+
+                      <div className="mt-6 w-full">
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart
+                            data={dataSourceTK}
+                            margin={{
+                              top: 20,
+                              right: 0,
+                              left: -25,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend />
+                            <Bar dataKey="sistole" fill="#8884d8" />
+                            <Bar dataKey="diastole" fill="#82ca9d" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   )}
                 </div>
               </Collapse.Panel>
               <Collapse.Panel header="Gula Darah" key="2">
                 <div className="py-6">
-                  <form className="px-4 items-center" onSubmit={handleSubmit}>
+                  <form className="px-4 items-center" onSubmit={handleSubmitGulaDarah}>
                   {/* <h2 className="font-bold text-[18px] lg:text-4xl mb-10 text-gray-900 uppercase">Biodata <br/><span className="text-xl">({opadData[0]?.name})</span></h2> */}
                     <DatePicker
-                      name="dategd"
+                      name="date"
                       placeholder="Tanggal Pemeriksaan"
                       size="large"
                       className="mb-4 border w-full"
-                      value={formUpdate.dategd ? moment(formUpdate.dategd, 'YYYY-MM-DD') : null}
-                      onChange={handleUpdateChangeDateGD}
                       required
+                      value={formDataGD.date}
+                      onChange={(date) => setFormDataGD({ ...formDataGD, date })}
                     />
                     <Input
                       type="number"
@@ -367,40 +632,70 @@ function Kesehatan() {
                       placeholder="Gula Darah"
                       size="large"
                       className="mb-4 border"
-                      value={formUpdate.guladarah}
-                      onChange={handleUpdateChange}
                       required
+                      value={formDataGD.guladarah}
+                      onChange={(e) => setFormDataGD({ ...formDataGD, guladarah: e.target.value })}
                     />
                     <Button
                       className="text-white bg-sky-950 w-full"
                       htmlType="submit"
                       size="large"
                     >
-                      Update
+                      Submit
                     </Button>
                   </form>
 
-                  {serverData?.data[0]?.guladarah && (
-                    <div className="mt-6 px-4">
-                      <h3 className="font-semibold text-lg">Riwayat:</h3>
-                      <p>Tanggal pemeriksaan: <span className="font-semibold">{moment(serverData?.data[0]?.dategd).format('DD MMMM YYYY')}</span></p>
-                      <p>Gula darah: <span className="font-semibold">{serverData?.data[0]?.guladarah} gr/dl ({kategoriGulaDarah})</span></p>
+                  {dataSourceGD[0]?.guladarah && (
+                    <div className="mt-6">
+                      <h3 className="font-semibold text-lg px-4">Riwayat:</h3>
+                      <p className="px-4">Tanggal pemeriksaan: <span className="font-semibold">{moment(dataSourceGD[0]?.date).format('DD MMMM YYYY')}</span></p>
+                      <p className="px-4">Gula darah: <span className="font-semibold">{dataSourceGD[0]?.guladarah} gr/dl ({kategoriGulaDarah})</span></p>
+                    
+                      <div className="mt-8">
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart
+                            data={dataSourceGD}
+                            margin={{
+                              top: 20,
+                              right: 0,
+                              left: -25,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip content={<CustomTooltipGD />} />
+                            <Legend />
+                            <Bar dataKey="guladarah" fill="#8884d8" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   )}
                 </div>
               </Collapse.Panel>
               <Collapse.Panel header="IMT" key="3">
                 <div className="py-6">
-                  <form className="px-4 items-center" onSubmit={handleSubmit}>
+                  <form className="px-4 items-center" onSubmit={handleSubmitIMT}>
+                    <DatePicker
+                      name="date"
+                      placeholder="Tanggal Pemeriksaan"
+                      size="large"
+                      className="mb-4 border w-full"
+                      required
+                      value={formDataIMT.date}
+                      onChange={(date) => setFormDataIMT({ ...formDataIMT, date })}
+                    />
                     <Input
                       type="number"
                       name="tb"
                       placeholder="Tinggi Badan"
                       size="large"
                       className="mb-4 border"
-                      value={formUpdate.tb}
-                      onChange={handleUpdateChange}
                       required
+                      value={formDataIMT.tb}
+                      onChange={(e) => setFormDataIMT({ ...formDataIMT, tb: e.target.value })}
                     />
                     <Input
                       type="number"
@@ -408,25 +703,47 @@ function Kesehatan() {
                       placeholder="Berat Badan"
                       size="large"
                       className="mb-4 border"
-                      value={formUpdate.bb}
-                      onChange={handleUpdateChange}
                       required
+                      value={formDataIMT.bb}
+                      onChange={(e) => setFormDataIMT({ ...formDataIMT, bb: e.target.value })}
                     />
                     <Button
                       className="text-white bg-sky-950 w-full"
                       htmlType="submit"
                       size="large"
                     >
-                      Update
+                      Submit
                     </Button>
                   </form>
                   
-                  {serverData?.data[0]?.tb && (
-                    <div className="mt-6 px-4">
-                      <h3 className="font-semibold text-lg">Riwayat:</h3>
-                      <p>Tinggi badan: <span className="font-semibold">{serverData?.data[0]?.tb} cm</span></p>
-                      <p>Berat badan: <span className="font-semibold">{serverData?.data[0]?.bb} kg</span></p>
-                      <p>IMT: <span className="font-semibold">{iMTBulat} ({kategoriIMT})</span></p>
+                  {dataSourceIMT[0]?.tb && (
+                    <div className="mt-6">
+                      <h3 className="font-semibold text-lg px-4">Riwayat:</h3>
+                      <p className="px-4">Tinggi badan: <span className="font-semibold">{dataSourceIMT[0]?.tb} cm</span></p>
+                      <p className="px-4">Berat badan: <span className="font-semibold">{dataSourceIMT[0]?.bb} kg</span></p>
+                      <p className="px-4">IMT: <span className="font-semibold">{iMTBulat} ({kategoriIMT})</span></p>
+
+                      <div className="mt-6">
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart
+                            data={dataSourceIMT}
+                            margin={{
+                              top: 20,
+                              right: 0,
+                              left: -25,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip content={<CustomTooltipIMT />} />
+                            <Legend />
+                            <Bar dataKey="tb" fill="#8884d8" />
+                            <Bar dataKey="bb" fill="#82ca9d" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   )}
                 </div>

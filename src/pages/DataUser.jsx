@@ -20,31 +20,31 @@ const columns = [
     dataIndex: 'gender',
     key: 'gender',
   },
-  {
-    title: 'Sistole (mmhg)',
-    dataIndex: 'tekanandarah',
-    key: 'tekanandarah',
-  },
-  {
-    title: 'Diastole (mmhg)',
-    dataIndex: 'tekanandarah2',
-    key: 'tekanandarah2',
-  },
-  {
-    title: 'Gula Darah (gr/dl)',
-    dataIndex: 'guladarah',
-    key: 'guladarah',
-  },
-  {
-    title: 'Tinggi Badan (cm)',
-    dataIndex: 'tb',
-    key: 'tb',
-  },
-  {
-    title: 'Berat Badan (kg)',
-    dataIndex: 'bb',
-    key: 'bb',
-  },
+  // {
+  //   title: 'Sistole (mmhg)',
+  //   dataIndex: 'tekanandarah',
+  //   key: 'tekanandarah',
+  // },
+  // {
+  //   title: 'Diastole (mmhg)',
+  //   dataIndex: 'tekanandarah2',
+  //   key: 'tekanandarah2',
+  // },
+  // {
+  //   title: 'Gula Darah (gr/dl)',
+  //   dataIndex: 'guladarah',
+  //   key: 'guladarah',
+  // },
+  // {
+  //   title: 'Tinggi Badan (cm)',
+  //   dataIndex: 'tb',
+  //   key: 'tb',
+  // },
+  // {
+  //   title: 'Berat Badan (kg)',
+  //   dataIndex: 'bb',
+  //   key: 'bb',
+  // },
   {
     title: 'Alamat',
     dataIndex: 'alamat',
@@ -131,11 +131,11 @@ function DataUser() {
         'Nama': item.name,
         'Tanggal lahir': item.ttl,
         'Jenis Kelamin': item.gender,
-        'Siastole (mmhg)': item.tekanandarah,
-        'Diastole (mmhg)': item.tekanandarah2,
-        'Gula Darah (gr/dl)': item.guladarah,
-        'Tinggi Badan (cm)': item.tb,
-        'Berat Badan (kg)': item.bb,
+        // 'Siastole (mmhg)': item.tekanandarah,
+        // 'Diastole (mmhg)': item.tekanandarah2,
+        // 'Gula Darah (gr/dl)': item.guladarah,
+        // 'Tinggi Badan (cm)': item.tb,
+        // 'Berat Badan (kg)': item.bb,
         'Alamat': item.alamat,
         'Telepon': item.telepon
       };
