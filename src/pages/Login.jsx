@@ -66,37 +66,37 @@ function Login() {
 
   const handleLogin = (event) => {
     event.preventDefault();
-
+  
     // Cek apakah ada data yang cocok dengan hasil input login
     const user = serverData.data.find(
       (opadData) => opadData.email === username && opadData.password === password
     );
-
-    const filteredData = serverData?.data.filter(item => item._id === user._id);
-
+  
     if (user) {
+      // Filter data based on the user's _id
+      const filteredData = serverData?.data.filter(item => item._id === user._id);
+  
       // Login berhasil
       console.log("Login berhasil:", user.name);
       message.success('Login Berhasil');
       navigate("/home");
-      // setError("");
-
+  
       // Generate token
       const token = uuidv4(); // Generate token using uuid library
-
+  
       // Simpan token ke dalam local storage
       localStorage.setItem("opad_token", token);
       localStorage.setItem("opadUser", user.name);
       localStorage.setItem("opadId", user._id);
       localStorage.setItem('opadData', JSON.stringify(filteredData));
-
+  
       // Tambahkan logika redirect atau set state untuk login di sini
     } else {
       // Tampilkan pesan error
-      // setError("Username atau password salah");
       message.error("Username atau password salah");
     }
   };
+    
   return (
     <>
       <section className="bg-gradient-to-t from-teal-100 to-sky-950">
