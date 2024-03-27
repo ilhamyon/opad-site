@@ -13,12 +13,28 @@ const relaksiOtot = '/relaksasi-otot-progresif.pdf';
 const senamKaki = '/Senam-kaki.pdf';
 const terapiJalan = '/Terapi-Jalan-Kaki.pdf';
 const makananHarian = '/A5-Buku-makanan-Harian.pdf';
+const autogenicTherapy = '/Autogenic therapy.pdf';
+const autogenic = '/AUTOGENIC PPT.pdf';
 
 function Artikel() {
   return (
     <div className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
         <div className="border-b-2 border-gray-400">
             <h2 className="text-xl font-bold px-4 py-4">Artikel</h2>
+        </div>
+
+        <div className="py-4 border-b-2 border-gray-400">
+          <h2 className="px-4 font-semibold text-xl mb-4">Terapi Autogenik</h2>
+          <div className="flex justify-center">
+            <PDFViewer file={autogenic} scale={0.26} />
+          </div>
+        </div>
+
+        <div className="py-4 border-b-2 border-gray-400">
+          <h2 className="px-4 font-semibold text-xl mb-4">Terapi Autogenik (Dasar)</h2>
+          <div className="flex justify-center">
+            <PDFViewer file={autogenicTherapy} scale={0.45} />
+          </div>
         </div>
 
         <div className="py-4 border-b-2 border-gray-400">
