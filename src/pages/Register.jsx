@@ -122,7 +122,7 @@ function Register() {
                 required
               />
               <Button
-                className="text-white bg-gray-800 w-full"
+                className="text-white bg-[#2c64c6] border-0 w-full"
                 htmlType="submit"
                 size="large"
               >
