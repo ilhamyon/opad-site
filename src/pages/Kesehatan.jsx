@@ -586,7 +586,7 @@ function Kesehatan() {
                       onChange={(e) => setFormData({ ...formData, diastole: e.target.value })}
                     />
                     <Button
-                      className="text-white bg-sky-950 w-full"
+                      className="text-white bg-[#5b8bdf] w-full"
                       htmlType="submit"
                       size="large"
                     >
@@ -650,7 +650,7 @@ function Kesehatan() {
                       onChange={(e) => setFormDataGD({ ...formDataGD, guladarah: e.target.value })}
                     />
                     <Button
-                      className="text-white bg-sky-950 w-full"
+                      className="text-white bg-[#5b8bdf] w-full"
                       htmlType="submit"
                       size="large"
                     >
@@ -721,7 +721,7 @@ function Kesehatan() {
                       onChange={(e) => setFormDataIMT({ ...formDataIMT, bb: e.target.value })}
                     />
                     <Button
-                      className="text-white bg-sky-950 w-full"
+                      className="text-white bg-[#5b8bdf] w-full"
                       htmlType="submit"
                       size="large"
                     >

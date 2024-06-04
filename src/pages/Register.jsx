@@ -1,6 +1,7 @@
 import { Button, Input, Select, message } from "antd"
 import { Link } from "react-router-dom"
 import { useState } from "react";
+const logo = '/OPAD-logo.png';
 
 const createSanityUser = async (opadData) => {
   // eslint-disable-next-line no-unused-vars
@@ -70,11 +71,14 @@ function Register() {
   }
   return (
     <>
-      <section className="bg-gradient-to-t from-teal-100 to-sky-950">
-        <div className="flex justify-center items-center h-screen">
+      <section className="bg-gradient-to-t from-[#16bce3] to-[#5b8bdf]">
+        <div className="flex flex-col justify-center items-center h-screen">
+          <div className="text-center flex flex-col items-center justify-center text-white px-6">
+            <img src={logo} width={190} />
+          </div>
           <div className="lg:w-1/2 lg:py-0 py-10 flex items-center">
             <form className="w-full lg:px-28 px-4 items-center" onSubmit={handleSubmit}>
-              <h2 className="font-bold text-white text-3xl lg:text-4xl mb-10 text-gray-900 uppercase">Register</h2>
+              {/* <h2 className="font-bold text-white text-3xl lg:text-4xl mb-10 text-gray-900 uppercase">Register</h2> */}
               {/* <Select
                 defaultValue="remaja"
                 name="type"

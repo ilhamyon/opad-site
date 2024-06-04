@@ -8,6 +8,7 @@ import TerimaKasih from "../assets/terimakasih.mp3"
 import TimerAudio from "../assets/timer.mp3"
 import { sanityClient } from "../lib/sanity/getClient";
 import moment from "moment";
+const logo = '/OPAD-logo.png';
 
 const { Option } = Select;
 
@@ -396,9 +397,14 @@ function Home() {
   return (
     <>
       <section className="my-0 mx-auto min-h-full max-w-screen-sm bg-white">
-        <div className="bg-sky-950 text-white py-6">
-          <h3 className="text-2xl px-4 font-semibold">Selamat Datang</h3>
-          <hp className="text-lg px-4">{opadUser}</hp>
+        <div className="bg-[#5b8bdf] text-white py-6 px-6 flex justify-between items-center">
+          <div>
+            <h3 className="text-2xl px-4 font-semibold">Hello,</h3>
+            <hp className="text-lg px-4">{opadUser}</hp>
+          </div>
+          <div className="px-4">
+            <img src={logo} width={120}/>
+          </div>
         </div>
 
         <div className="px-4 mt-10">
@@ -414,7 +420,7 @@ function Home() {
                     <Option value="45">45 Menit</Option>
                     <Option value="60">60 Menit</Option>
                   </Select>
-                  <Button size="large" className="bg-sky-950 text-white" onClick={handleStartStop} disabled={!selectedMode}>
+                  <Button size="large" className="bg-[#5b8bdf] text-white" onClick={handleStartStop} disabled={!selectedMode}>
                     {isRunning ? 'Stop' : 'Mulai'}
                   </Button>
                 </div>
@@ -424,7 +430,7 @@ function Home() {
                   {instruction && <p className="font-bold text-center mt-6">{`"${instruction}..."`}</p>}
 
                   {showButton && (
-                    <Button onClick={handleSubmit} className="mt-6 bg-sky-950 text-white" size="large">
+                    <Button onClick={handleSubmit} className="mt-6 bg-[#5b8bdf] text-white" size="large">
                       Saya sudah melakukan latihan
                     </Button>
                   )}

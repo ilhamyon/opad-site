@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { sanityClient } from "../lib/sanity/getClient";
 import { v4 as uuidv4 } from "uuid";
+const logo = '/OPAD-logo.png';
 
 function Login() {
   const navigate = useNavigate();
@@ -99,11 +100,18 @@ function Login() {
     
   return (
     <>
-      <section className="bg-gradient-to-t from-teal-100 to-sky-950">
-        <div className="flex justify-center items-center h-screen">
+      <section className="bg-gradient-to-t from-[#16bce3] to-[#5b8bdf]">
+        <div className="flex flex-col justify-center items-center h-screen">
+          <div className="text-center flex flex-col items-center justify-center text-white px-6">
+            <img src={logo} width={190} />
+            <h2 className="text-2xl font-semibold mt-6">Selamat Datang!</h2>
+            <p>
+              Mari bersama-sama pantau gula darah Anda dan raih hidup yang lebih sehat!
+            </p>
+          </div>
           <div className="py-10 flex items-center">
             <form className="w-full lg:px-28 px-4 items-center" onSubmit={handleLogin} style={{ margin: '0 auto' }}>
-              <h2 className="font-bold text-white text-3xl lg:text-4xl mb-10 text-gray-900 uppercase">Login</h2>
+              {/* <h2 className="font-bold text-white text-3xl lg:text-4xl mb-10 text-gray-900 uppercase">Login</h2> */}
               <Input
                 type="text"
                 placeholder="Username"
@@ -122,7 +130,7 @@ function Login() {
               />
               {/* {error && <p className="text-red-500">{error}</p>} */}
               <Button
-                className="text-white bg-gray-800 w-full"
+                className="text-white bg-[#2c64c6] border-0 w-full"
                 htmlType="submit"
                 size="large"
               >

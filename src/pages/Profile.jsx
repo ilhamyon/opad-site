@@ -206,7 +206,7 @@ function Profile() {
                 onChange={handleUpdateChange}
               />
               <Button
-                className="text-white bg-sky-950 w-full"
+                className="text-white bg-[#5b8bdf] w-full"
                 htmlType="submit"
                 size="large"
               >
@@ -214,7 +214,7 @@ function Profile() {
               </Button>
             </form>
             <div className="px-4 py-4">
-              <Button size="large" onClick={deauthUser} className="bg-sky-950 text-white w-full">Logout</Button>
+              <Button size="large" onClick={deauthUser} className="bg-[#5b8bdf] text-white w-full">Logout</Button>
             </div>
           </div>
       </div>
